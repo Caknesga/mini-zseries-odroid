@@ -2,29 +2,37 @@ from flask import Flask, request, jsonify
 import threading
 
 app = Flask(__name__)
-balance = 1000  # Startguthaben
+accounts = {"A": 1000, "B": 2000, "C": 1500}
 lock = threading.Lock()  # Für Konsistenz
 
 @app.route("/balance", methods=["GET"])
-def get_balance():
-    return jsonify({"balance": balance})
+def get_balance(account):
+    if account not in accounts:
+        return jsonify({"error": "Account not found"}), 404
+    return jsonify({"account": account, "balance": accounts[account]})
 
 @app.route("/deposit", methods=["POST"])
 def deposit():
-    global balance
+    global accounts
+    account = request.json.get("account")
     amount = request.json.get("amount", 0)
+    if account not in accounts:
+        return jsonify({"error": "Account not found"}), 404
     with lock:
         balance += amount
-    return jsonify({"balance": balance})
+    return jsonify({"account": account, "balance": accounts[account]})
 
 @app.route("/withdraw", methods=["POST"])
 def withdraw():
-    global balance
+    global accounts
+    account = request.json.get("account")
     amount = request.json.get("amount", 0)
+    if account not in accounts:
+        return jsonify({"error": "Account not found"}), 404
     with lock:
-        if balance >= amount:
-            balance -= amount
-            return jsonify({"balance": balance})
+        if accounts[account] >= amount:
+            accounts[account] -= amount
+            return jsonify({"account": account, "balance": accounts[account]})
         else:
             return jsonify({"error": "Not enough funds"}), 400
 
