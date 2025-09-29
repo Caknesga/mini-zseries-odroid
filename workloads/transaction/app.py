@@ -5,7 +5,7 @@ app = Flask(__name__)
 accounts = {"A": 1000, "B": 2000, "C": 1500}
 lock = threading.Lock()  # Für Konsistenz
 
-@app.route("/balance", methods=["GET"])
+@app.route("/balance/<account>", methods=["GET"])
 def get_balance(account):
     if account not in accounts:
         return jsonify({"error": "Account not found"}), 404
