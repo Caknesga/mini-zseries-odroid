@@ -22,7 +22,7 @@ def random_transaction():
 
 # 50 Threads starten
 threads = []
-for _ in range(50):
+for _ in range(70):
     t = threading.Thread(target=random_transaction)
     t.start()
     threads.append(t)
