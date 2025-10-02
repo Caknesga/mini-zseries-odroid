@@ -2,7 +2,7 @@ import requests
 import random
 import threading
 
-ODROID_IP = "192.168.1.9"   # anpassen falls nötig
+ODROID_IP = "192.168.1.9" #odroid ip
 PORT = 5050
 URL = f"http://{ODROID_IP}:{PORT}"
 
@@ -20,9 +20,9 @@ def random_transaction():
 
     print(f"{action} {amount} on {account} → {r.json()}")
 
-# 50 Threads starten
+# 100 Threads
 threads = []
-for _ in range(70):
+for _ in range(100):
     t = threading.Thread(target=random_transaction)
     t.start()
     threads.append(t)
