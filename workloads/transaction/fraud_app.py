@@ -11,7 +11,6 @@ lock = threading.Lock()
 # Pfad zum Modell (nach scp)
 MODEL_PATH = "workloads/fraud_model.pkl"
 
-
 # Lade Modell + optionalen Scaler
 model = joblib.load(MODEL_PATH)
 scaler = None
