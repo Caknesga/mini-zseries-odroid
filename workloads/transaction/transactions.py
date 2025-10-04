@@ -2,7 +2,7 @@ import requests
 import random
 import threading
 
-ODROID_IP = "192.168.1.9" #odroid ip
+ODROID_IP = "192.168.1.9" #anpassen für lokale Netzwerk
 PORT = 5050
 URL = f"http://{ODROID_IP}:{PORT}"
 
