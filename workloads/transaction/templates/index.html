@@ -11,7 +11,7 @@
     <div class="account-grid">
         {% for name, balance in accounts.items() %}
         <div class="account-box">
-            <h2> Kaaonto {{ name }}</h2>
+            <h2> Konto {{ name }}</h2>
             <p>Saldo: <strong>{{ balance }}</strong> EUR</p>
             <form action="/deposit" method="post">
                 <input type="hidden" name="account" value="{{ name }}">
