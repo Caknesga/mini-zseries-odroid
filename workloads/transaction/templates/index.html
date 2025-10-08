@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h1>💰 Mini-ZSeries Kontenübersicht</h1>
+    <h1> Mini-ZSeries Kontenübersicht</h1>
     <div class="account-grid">
         {% for name, balance in accounts.items() %}
         <div class="account-box">
@@ -15,12 +15,12 @@
             <form action="/deposit" method="post">
                 <input type="hidden" name="account" value="{{ name }}">
                 <input type="number" name="amount" placeholder="Einzahlen">
-                <button type="submit">💵 Deposit</button>
+                <button type="submit">Deposit</button>
             </form>
             <form action="/withdraw" method="post">
                 <input type="hidden" name="account" value="{{ name }}">
                 <input type="number" name="amount" placeholder="Abheben">
-                <button type="submit">🏧 Withdraw</button>
+                <button type="submit"> Withdraw</button>
             </form>
         </div>
         {% endfor %}

@@ -1,40 +1,70 @@
+/* === IBM Mini ZSeries Dashboard Styling === */
+
 body {
-    font-family: Arial, sans-serif;
-    background-color: #0b0c10;
-    color: #f1f1f1;
+    font-family: "IBM Plex Sans", Arial, sans-serif;
+    background-color: #0f1112; /* IBM dark UI background */
+    color: #ffffff;
     text-align: center;
+    margin: 0;
+    padding: 0;
 }
 
 h1 {
-    color: #45a29e;
-    margin-bottom: 20px;
+    color: #3d70b2; /* IBM blue primary */
+    margin: 40px 0 20px;
+    font-weight: 600;
+    font-size: 2em;
 }
 
 .account-grid {
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
-    gap: 20px;
+    gap: 25px;
+    padding: 20px;
 }
 
 .account-box {
-    background-color: #1f2833;
-    border: 2px solid #45a29e;
-    border-radius: 15px;
+    background-color: #1d1f21;
+    border: 1px solid #3d70b2;
+    border-radius: 12px;
     padding: 20px;
-    width: 220px;
-    box-shadow: 0 0 10px #45a29e;
+    width: 240px;
+    box-shadow: 0 0 15px rgba(61, 112, 178, 0.3);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.account-box:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 0 25px rgba(61, 112, 178, 0.5);
 }
 
 button {
-    background-color: #66fcf1;
+    background-color: #3d70b2;
     border: none;
-    padding: 5px 10px;
-    border-radius: 8px;
+    padding: 8px 14px;
+    border-radius: 6px;
+    color: white;
+    font-weight: 600;
     cursor: pointer;
+    margin: 5px;
+    transition: background-color 0.2s;
 }
 
 button:hover {
-    background-color: #45a29e;
-    color: #fff;
+    background-color: #30588f;
+}
+
+input[type="number"] {
+    background-color: #111315;
+    border: 1px solid #3d70b2;
+    color: white;
+    padding: 6px;
+    border-radius: 4px;
+    width: 70%;
+    margin-bottom: 6px;
+}
+
+form {
+    margin-top: 10px;
 }
