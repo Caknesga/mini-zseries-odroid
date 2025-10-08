@@ -1,14 +1,13 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 import threading
 
 app = Flask(__name__)
 accounts = {"A": 1000, "B": 2000, "C": 1500}
 lock = threading.Lock()  # Für Konsistenz
 
-@app.route("/accounts", methods=["GET"])
-def list_accounts():
-    # Alle Konten anzeigen
-    return jsonify(accounts)
+@app.route("/")
+def index():
+    return render_template("index.html", accounts=accounts)
 
 @app.route("/balance/<account>", methods=["GET"])
 def get_balance(account):
