@@ -34,10 +34,10 @@ Kurze Beschreibung deines Mini-ZSeries-Projekts (Batch-Processing + ACID-Transak
 
 | Zeit | CPU-Last (%) | Temp (°C) | Transaktionen/s | Fehler | Bewertung |
 |------|--------------:|-----------:|----------------:|--------|-----------|
-| 12:00 | 18 | 45 | 12 | 0 | OK |
-| 12:05 | 95 | 78 | 11 | 0 | OK |
-| 12:10 | 100 | 84 | – | Crash | NOK |
-| 12:12 | nach Restart | 56 | – | 0 | Recovery OK |
+| 15:36 | 18 | 45-58 | 10 | 0 | OK |
+| 15:41 | 95 | 70-78 | 100 | 0 | OK |
+| 15:48 | 100 | 84-93 | – | Crash | NOK |
+| 15:55 | nach Restart | 56 | – | 0 | Recovery OK |
 
 ---
 
