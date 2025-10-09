@@ -4,7 +4,7 @@ import json, os
 
 
 app = Flask(__name__)
-accounts = {"A": 1000, "B": 2000, "C": 1500}
+accounts = {"Deniz": 1000, "Markus": 2000, "IBM": 1500}
 lock = threading.Lock()  # Für Konsistenz
 
 def save_state():
