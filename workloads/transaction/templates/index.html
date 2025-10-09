@@ -8,23 +8,59 @@
 </head>
 <body>
     <h1> Mini-ZSeries Kontenübersicht</h1>
+
     <div class="account-grid">
         {% for name, balance in accounts.items() %}
-        <div class="account-box">
-            <h2> Konto {{ name }}</h2>
-            <p>Saldo: <strong>{{ balance }}</strong> EUR</p>
-            <form action="/deposit" method="post">
-                <input type="hidden" name="account" value="{{ name }}">
-                <input type="number" name="amount" placeholder="Einzahlen">
-                <button type="submit">Deposit</button>
-            </form>
-            <form action="/withdraw" method="post">
-                <input type="hidden" name="account" value="{{ name }}">
-                <input type="number" name="amount" placeholder="Abheben">
-                <button type="submit"> Withdraw</button>
-            </form>
+        <div class="account-box" id="account-{{ name }}">
+            <h2>Konto {{ name }}</h2>
+            <p>Saldo: <strong id="balance-{{ name }}">{{ balance }}</strong> EUR</p>
+
+            <input type="number" id="amount-{{ name }}" placeholder="Betrag" min="0" step="1">
+            <div class="btn-row">
+                <button onclick="updateBalance('{{ name }}', 'deposit')">Einzahlen</button>
+                <button onclick="updateBalance('{{ name }}', 'withdraw')">Abheben</button>
+            </div>
+
+            <p id="status-{{ name }}" class="status"></p>
         </div>
         {% endfor %}
     </div>
+
+    <script>
+    async function updateBalance(account, action) {
+        const amountInput = document.getElementById(`amount-${account}`);
+        const amount = parseFloat(amountInput.value);
+        const statusEl = document.getElementById(`status-${account}`);
+        const balanceEl = document.getElementById(`balance-${account}`);
+
+        if (isNaN(amount) || amount <= 0) {
+            statusEl.textContent = " Ungültiger Betrag";
+            statusEl.style.color = "#da1e28"; // IBM Red
+            return;
+        }
+
+        try {
+            const response = await fetch(`/${action}`, {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({account: account, amount: amount})
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                balanceEl.textContent = data.balance;
+                statusEl.textContent = "Erfolgreich!";
+                statusEl.style.color = "#198038"; // IBM Green
+            } else {
+                statusEl.textContent = ` ${data.error}`;
+                statusEl.style.color = "#da1e28";
+            }
+        } catch (error) {
+            statusEl.textContent = "Verbindungsfehler";
+            statusEl.style.color = "#da1e28";
+        }
+    }
+    </script>
 </body>
 </html>

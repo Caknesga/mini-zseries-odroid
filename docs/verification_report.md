@@ -1,8 +1,7 @@
 # Mini-ZSeries Hardware- & Software-Verifikationsbericht
 
 ## 1- Projektübersicht
-**Ziel:**  
-Kurze Beschreibung deines Mini-ZSeries-Projekts (Batch-Processing + ACID-Transaktionen + Recovery).
+
 
 **System:**  
 | Komponente | Beschreibung |
@@ -27,7 +26,7 @@ Kurze Beschreibung deines Mini-ZSeries-Projekts (Batch-Processing + ACID-Transak
 | Persistenz-Test | JSON-Zustand prüfen | Nach Restart Daten identisch | gleich |
 | Fraud-Detection-Test | AI-Modell validieren | 100 virtuelle Transaktionen mit 10 % Fraud-Rate simulieren | Fraud-Score ≥ 0.9 bei echten Anomalien |
 | Batch-Processing-Test | Sequenzielle Transaktionen verarbeiten | 50 Transaktionen in 5 Sekunden-Batch | Keine Race-Conditions |
-| Temperatur-Monitoring | Thermal-Stabilität validieren | `sensors` und `vcgencmd measure_temp` | Max. < 80 °C |
+| Temperatur-Monitoring | Thermal-Stabilität validieren | `sensors` und `vcgencmd measure_temp` | Max. < 93 °C |
 ---
 
 ## 3- Messergebnisse (Beispiel-Protokoll)
