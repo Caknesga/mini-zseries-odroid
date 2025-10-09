@@ -49,6 +49,7 @@ def withdraw():
         return jsonify({"error": "Account not found"}), 404
     with lock:
         if accounts[account] >= amount:
+            accounts[account] -= amount
             save_state()
             return jsonify({"account": account, "balance": accounts[account]})
         else:
