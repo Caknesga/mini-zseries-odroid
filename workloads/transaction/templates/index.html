@@ -9,9 +9,9 @@
 <body>
     <h1> Mini-ZSeries Kontenübersicht</h1>
 
-     <div class="account-box" id="account-{{ name }}" data-threshold="{{ thresholds[name] }}">
+    <div class="account-grid">
         {% for name, balance in accounts.items() %}
-        <div class="account-box" id="account-{{ name }}">
+     <div class="account-box" id="account-{{ name }}" data-threshold="{{ thresholds[name] }}">
             <h2>Konto {{ name }}</h2>
             <p>Saldo: <strong id="balance-{{ name }}">{{ balance }}</strong> EUR</p>
 
