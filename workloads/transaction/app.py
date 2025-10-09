@@ -23,7 +23,7 @@ def load_state():
 @app.route("/")
 def index():
     # Beispiel in Flask
-    thresholds = {"A": 1000, "B": 500, "C": 2000}
+    thresholds = {"Deniz": 100, "Markus": 500, "IBM": 10000}
     return render_template("index.html", accounts=accounts, thresholds=thresholds)
 
         
