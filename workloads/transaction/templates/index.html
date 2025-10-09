@@ -33,6 +33,14 @@
         const statusEl = document.getElementById(`status-${account}`);
         const balanceEl = document.getElementById(`balance-${account}`);
 
+
+
+        if ( amount >= 1000) {
+            statusEl.textContent = " Mögliche Detected";
+            statusEl.style.color = "#da1e28"; // IBM Red
+            return;
+        }
+
         if (isNaN(amount) || amount <= 0) {
             statusEl.textContent = " Ungültiger Betrag";
             statusEl.style.color = "#da1e28"; // IBM Red
