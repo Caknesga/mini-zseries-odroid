@@ -44,7 +44,7 @@ Kurze Beschreibung deines Mini-ZSeries-Projekts (Batch-Processing + ACID-Transak
 ## 4- Ergebnisse / Pass-Fail-Tabelle
 
 | Test | Bewertung | Kommentar |
-|------|-----------|------------|------------|
+|------|------------|------------|
 | CPU-Stabilität | OK | keine Überhitzung |
 | Datenpersistenz  | OK | JSON Recovery funktioniert |
 | Parallelität | Grenzwertig | leichte Verzögerung bei 8 Threads |
