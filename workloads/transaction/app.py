@@ -17,7 +17,7 @@ def load_state():
         with open("accounts.json", "r") as f:
             accounts = json.load(f)
     else:
-        accounts = {"A": 1000, "B": 2000, "C": 1500}
+        accounts = {"Deniz": 1000, "Markus": 2000, "IBM": 1500}
 
 
 @app.route("/")
