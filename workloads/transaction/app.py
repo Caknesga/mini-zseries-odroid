@@ -22,7 +22,11 @@ def load_state():
 
 @app.route("/")
 def index():
-    return render_template("index.html", accounts=accounts)
+    # Beispiel in Flask
+    thresholds = {"A": 1000, "B": 500, "C": 2000}
+    return render_template("index.html", accounts=accounts, thresholds=thresholds)
+
+        
 
 @app.route("/balance/<account>", methods=["GET"])
 def get_balance(account):

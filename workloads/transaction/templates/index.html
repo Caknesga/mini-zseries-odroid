@@ -9,7 +9,7 @@
 <body>
     <h1> Mini-ZSeries Kontenübersicht</h1>
 
-    <div class="account-grid">
+     <div class="account-box" id="account-{{ name }}" data-threshold="{{ thresholds[name] }}">
         {% for name, balance in accounts.items() %}
         <div class="account-box" id="account-{{ name }}">
             <h2>Konto {{ name }}</h2>
@@ -33,13 +33,15 @@
         const statusEl = document.getElementById(`status-${account}`);
         const balanceEl = document.getElementById(`balance-${account}`);
 
-
-
-        if ( amount >= 1000) {
-            statusEl.textContent = " Mögliche Detected";
-            statusEl.style.color = "#da1e28"; // IBM Red
-            return;
+        const box = document.getElementById(`account-${account}`);
+        const threshold = parseFloat(box.dataset.threshold) || 1000;
+        if (amount >= threshold) {
+        statusEl.textContent = " Möglicher Fraud";
+        statusEl.style.color = "#da1e28";
+        return;
         }
+
+       
 
         if (isNaN(amount) || amount <= 0) {
             statusEl.textContent = " Ungültiger Betrag";
