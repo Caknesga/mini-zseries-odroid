@@ -6,7 +6,7 @@ ODROID_IP = "192.168.1.9" #anpassen für lokale Netzwerks
 PORT = 5050
 URL = f"http://{ODROID_IP}:{PORT}"
 
-accounts = ["A", "B", "C"]
+accounts = ["Deniz", "Markus", "IBM"]
 
 def random_transaction():
     account = random.choice(accounts)
