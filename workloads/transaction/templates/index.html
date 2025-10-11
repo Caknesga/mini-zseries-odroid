@@ -26,6 +26,7 @@
             <input type="number" name="amount" placeholder="Amount">
             <button type="submit">Transfer</button>
         </form>
+        <p id="transferResult"></p>
             <p id="status-{{ name }}" class="status"></p>
         </div>
         {% endfor %}
@@ -76,6 +77,36 @@
             statusEl.style.color = "#da1e28";
         }
     }
+    document.getElementById("transferForm").addEventListener("submit", async function(e) {
+  e.preventDefault();
+
+  const from = document.getElementById("fromAccount").value;
+  const to = document.getElementById("toAccount").value;
+  const amount = parseFloat(document.getElementById("transferAmount").value);
+
+  const response = await fetch("/transfer", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ from, to, amount })
+  });
+
+  const result = await response.json();
+  const resultEl = document.getElementById("transferResult");
+
+  if (response.ok) {
+    resultEl.textContent = `✅ Transferred ${amount} EUR from ${from} to ${to}.`;
+    resultEl.style.color = "green";
+
+    // 🔄 Refresh balances on page
+    for (const [account, balance] of Object.entries(result.balances)) {
+      const el = document.getElementById(`balance-${account}`);
+      if (el) el.textContent = balance;
+    }
+  } else {
+    resultEl.textContent = `⚠️ ${result.error}`;
+    resultEl.style.color = "red";
+  }
+});
     </script>
 </body>
 </html>
