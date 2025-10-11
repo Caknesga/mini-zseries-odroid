@@ -6,19 +6,26 @@ ODROID_IP = "192.168.1.9" #anpassen für lokale Netzwerks
 PORT = 5050
 URL = f"http://{ODROID_IP}:{PORT}"
 
-accounts = ["Deniz", "Markus", "IBM"]
+accounts = ["A", "B", "C"]
 
 def random_transaction():
     account = random.choice(accounts)
     action = random.choice(["deposit", "withdraw"])
-    amount = random.randint(1, 50)
+    amount = random.randint(1, 1000)
 
     if action == "deposit":
-        r = requests.post(f"{URL}/deposit", json={"account": account, "amount": amount})
-    else:
-        r = requests.post(f"{URL}/withdraw", json={"account": account, "amount": amount})
+            r = requests.post(f"{URL}/deposit", json={"account": account, "amount": amount})
+            print(f"Deposit {amount} → {account}: {r.json()}")
 
-    print(f"{action} {amount} on {account} → {r.json()}")
+    elif action == "withdraw":
+        r = requests.post(f"{URL}/withdraw", json={"account": account, "amount": amount})
+        print(f"Withdraw {amount} ← {account}: {r.json()}")
+
+    elif action == "transfer":
+        from_acc = random.choice(accounts)
+        to_acc = random.choice([a for a in accounts if a != from_acc])
+        r = requests.post(f"{URL}/transfer", json={"from": from_acc, "to": to_acc, "amount": amount})
+        print(f"Transfer {amount} from {from_acc} to {to_acc}: {r.json()}")
 
 # 10 Threads
 threads = []

@@ -21,13 +21,7 @@
                 <button onclick="updateBalance('{{ name }}', 'deposit')">Einzahlen</button>
                 <button onclick="updateBalance('{{ name }}', 'withdraw')">Abheben</button>
             </div>
-        <form id="transferForm">
-            <input type="text" name="from" placeholder="From Account">
-            <input type="text" name="to" placeholder="To Account">
-            <input type="number" name="amount" placeholder="Amount">
-            <button type="submit">Transfer</button>
-        </form>
-        <p id="transferResult"></p>
+    
             <p id="status-{{ name }}" class="status"></p>
         </div>
         {% endfor %}
@@ -80,52 +74,58 @@
     }
     
     </script>
-    <form id="transferForm">
-  <input type="text" id="fromAccount" placeholder="Von Konto">
-  <input type="text" id="toAccount" placeholder="Zu Konto">
+
+<form id="transferForm">
+  <label>Von Konto:</label>
+  <input type="text" id="fromAccount" placeholder="z. B. Deniz">
+  
+  <label>Zu Konto:</label>
+  <input type="text" id="toAccount" placeholder="z. B. Markus">
+
+  <label>Betrag:</label>
   <input type="number" id="transferAmount" placeholder="Betrag">
-  <button type="submit">Transfer</button>
+
+  <button type="submit">Transferieren</button>
 </form>
 
 <p id="transferResult"></p>
-
 <script>
-document.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("transferForm").addEventListener("submit", async (e) => {
-    e.preventDefault();
+        document.addEventListener("DOMContentLoaded", () => {
+        document.getElementById("transferForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
 
-    const from = document.getElementById("fromAccount").value;
-    const to = document.getElementById("toAccount").value;
-    const amount = parseFloat(document.getElementById("transferAmount").value);
-    const resultEl = document.getElementById("transferResult");
+            const from = document.getElementById("fromAccount").value;
+            const to = document.getElementById("toAccount").value;
+            const amount = parseFloat(document.getElementById("transferAmount").value);
+            const resultEl = document.getElementById("transferResult");
 
-    try {
-      const response = await fetch("/transfer", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ from, to, amount })
-      });
-      const result = await response.json();
+            try {
+            const response = await fetch("/transfer", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ from, to, amount })
+            });
+            const result = await response.json();
 
-      if (response.ok) {
-        resultEl.textContent = `✅ ${amount} EUR von ${from} nach ${to} übertragen.`;
-        resultEl.style.color = "#198038";
+            if (response.ok) {
+                resultEl.textContent = ` ${amount} EUR von ${from} nach ${to} übertragen.`;
+                resultEl.style.color = "#198038";
 
-        // 🔄 Refresh balances
-        for (const [acc, balance] of Object.entries(result.balances)) {
-          const el = document.getElementById(`balance-${acc}`);
-          if (el) el.textContent = balance;
-        }
-      } else {
-        resultEl.textContent = `⚠️ ${result.error}`;
-        resultEl.style.color = "#da1e28";
-      }
-    } catch (error) {
-      resultEl.textContent = "🚫 Fehler bei der Verbindung";
-      resultEl.style.color = "#da1e28";
-    }
-  });
-});
+                // 🔄 Refresh balances
+                for (const [acc, balance] of Object.entries(result.balances)) {
+                const el = document.getElementById(`balance-${acc}`);
+                if (el) el.textContent = balance;
+                }
+            } else {
+                resultEl.textContent = ` ${result.error}`;
+                resultEl.style.color = "#da1e28";
+            }
+            } catch (error) {
+            resultEl.textContent = "Fehler bei der Verbindung";
+            resultEl.style.color = "#da1e28";
+            }
+        });
+        });
 </script>
 
 </body>
