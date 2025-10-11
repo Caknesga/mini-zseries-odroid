@@ -20,7 +20,12 @@
                 <button onclick="updateBalance('{{ name }}', 'deposit')">Einzahlen</button>
                 <button onclick="updateBalance('{{ name }}', 'withdraw')">Abheben</button>
             </div>
-
+        <form id="transferForm">
+            <input type="text" name="from" placeholder="From Account">
+            <input type="text" name="to" placeholder="To Account">
+            <input type="number" name="amount" placeholder="Amount">
+            <button type="submit">Transfer</button>
+        </form>
             <p id="status-{{ name }}" class="status"></p>
         </div>
         {% endfor %}

@@ -4,7 +4,7 @@ import json, os
 
 
 app = Flask(__name__)
-accounts = {"Deniz": 1000, "Markus": 2000, "IBM": 1500}
+accounts = {"A": 1000, "B": 3000, "C": 1500000}
 lock = threading.Lock()  # Für Konsistenz
 
 def save_state():
@@ -17,13 +17,13 @@ def load_state():
         with open("accounts.json", "r") as f:
             accounts = json.load(f)
     else:
-        accounts = {"Deniz": 1000, "Markus": 2000, "IBM": 1500}
+        accounts = {"A": 1000, "B": 2000, "C": 1500}
 
 
 @app.route("/")
 def index():
     # Beispiel in Flask
-    thresholds = {"Deniz": 100, "Markus": 500, "IBM": 10000}
+    thresholds = {"A": 100, "B": 500, "C": 100000}
     return render_template("index.html", accounts=accounts, thresholds=thresholds)
 
         
@@ -58,6 +58,32 @@ def withdraw():
             return jsonify({"account": account, "balance": accounts[account]})
         else:
             save_state()
+            return jsonify({"error": "Not enough funds"}), 400
+
+@app.route("/transfer", methods=["POST"])
+def transfer():
+    from_account = request.json.get("from")
+    to_account = request.json.get("to")
+    amount = request.json.get("amount", 0)
+
+    if from_account not in accounts or to_account not in accounts:
+        return jsonify({"error": "One or both accounts not found"}), 404
+
+    if from_account == to_account:
+        return jsonify({"error": "Source and destination must be different"}), 400
+
+    with lock:
+        if accounts[from_account] >= amount:
+            accounts[from_account] -= amount
+            accounts[to_account] += amount
+            save_state()
+            return jsonify({
+                "from": from_account,
+                "to": to_account,
+                "amount": amount,
+                "balances": accounts
+            })
+        else:
             return jsonify({"error": "Not enough funds"}), 400
 
 if __name__ == "__main__":
