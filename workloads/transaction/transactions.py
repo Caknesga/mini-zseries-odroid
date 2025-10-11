@@ -8,7 +8,7 @@ URL = f"http://{ODROID_IP}:{PORT}"
 
 accounts = ["A", "B", "C"]
 
-def random_transaction(accounts):
+def random_transaction():
     account = random.choice(accounts)
     action = random.choice(["deposit", "withdraw","transfer"])
     amount = random.randint(1, 1000)
