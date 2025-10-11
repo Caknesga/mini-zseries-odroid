@@ -24,8 +24,6 @@ def random_transaction():
     elif action == "transfer":
         
         to_acc = random.choice([a for a in accounts if a != account])
-        print(f"DEBUG: Trying to transfer {amount} from {account} to {to_acc}")
-
         r = requests.post(f"{URL}/transfer", json={"from": account, "to": to_acc, "amount": amount})
         print(f"Transfer {amount} from {account} to {to_acc}: {r.json()}")
 
