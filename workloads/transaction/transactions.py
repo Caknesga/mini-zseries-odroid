@@ -22,10 +22,12 @@ def random_transaction():
         print(f"Withdraw {amount} ← {account}: {r.json()}")
 
     elif action == "transfer":
-        from_acc = random.choice(accounts)
-        to_acc = random.choice([a for a in accounts if a != from_acc])
-        r = requests.post(f"{URL}/transfer", json={"from": from_acc, "to": to_acc, "amount": amount})
-        print(f"Transfer {amount} from {from_acc} to {to_acc}: {r.json()}")
+        
+        to_acc = random.choice([a for a in accounts if a != account])
+        print(f"DEBUG: Trying to transfer {amount} from {account} to {to_acc}")
+
+        r = requests.post(f"{URL}/transfer", json={"from": account, "to": to_acc, "amount": amount})
+        print(f"Transfer {amount} from {account} to {to_acc}: {r.json()}")
 
 # 10 Threads
 threads = []
