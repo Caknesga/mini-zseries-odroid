@@ -148,7 +148,7 @@
         const data = await res.json();
         const table = document.getElementById("txTable");
 
-        data.forEach(tx => {
+        data.slice().reverse().forEach(tx => {
             const row = document.createElement("tr");
             row.innerHTML = `
                 <td>${tx.timestamp}</td>
@@ -164,7 +164,7 @@
         });
     }
 
-    window.onload = loadTransactions;
+   setInterval(refreshTransactions, 3000);
 </script>
 
 

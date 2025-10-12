@@ -34,10 +34,6 @@ def log_transaction(tx_type, account=None, from_acc=None, to_acc=None, amount=0,
     }
     transactions.append(entry)
 
-    # (Optional) Persist logs to a file
-    with open("transactions.json", "w") as f:
-        json.dump(transactions, f, indent=2)
-
 
 @app.route("/")
 def index():
@@ -46,7 +42,6 @@ def index():
     return render_template("index.html", accounts=accounts, thresholds=thresholds)
 
         
-
 @app.route("/balance/<account>", methods=["GET"])
 def get_balance(account):
     if account not in accounts:
@@ -93,7 +88,7 @@ def transfer():
     amount = request.json.get("amount", 0)
 
     if from_account not in accounts or to_account not in accounts:
-        log_transaction("transfer", from_acc=from_account, to_acc=to_account, amount=amount, status="failed")
+        log_transaction("transfer", account=to_account, from_acc=from_account, to_acc=to_account, amount=amount, status="failed")
 
         return jsonify({"error": "One or both accounts not found"}), 404
 
