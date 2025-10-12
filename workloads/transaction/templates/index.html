@@ -129,7 +129,7 @@
 </script>
 
 <h2> Transaction History</h2>
-<table id="txBody">
+<table id="txTable">
   <thead>
     <tr>
       <th>Time</th>
@@ -141,7 +141,7 @@
       <th>Status</th>
     </tr>
   </thead>
-  <tbody id="txTable" ></tbody>
+  <tbody id="txBody"></tbody>
 </table>
 
 <script>
@@ -170,7 +170,7 @@ async function loadTransactions() {
       <td>${latest.amount}</td>
       <td>${latest.status}</td>
   `;
-  tbody.appendChild(row);
+  tbody.prepend(row);
 }
 
 setInterval(loadTransactions, 2000);
