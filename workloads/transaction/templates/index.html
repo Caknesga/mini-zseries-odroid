@@ -130,16 +130,18 @@
 
 <h2> Transaction History</h2>
 <table id="txTable">
+  <thead>
     <tr>
-        <th>Timestamp</th>
-        <th>Type</th>
-        <th>Account</th>
-        <th>From</th>
-        <th>To</th>
-        <th>Amount</th>
-        <th>Status</th>
-    
+      <th>Time</th>
+      <th>Type</th>
+      <th>Account</th>
+      <th>From</th>
+      <th>To</th>
+      <th>Amount</th>
+      <th>Status</th>
     </tr>
+  </thead>
+  <tbody id="txBody"></tbody>
 </table>
 
 <script>
@@ -150,15 +152,14 @@ async function loadTransactions() {
   const data = await res.json();
   if (data.length === 0) return;
 
-  const latest = data[data.length - 1]; // ✅ only the newest transaction
+  const latest = data[data.length - 1]; // ✅ last transaction only
 
-  // ✅ Only update if this transaction is new
+  // ✅ Only proceed if this transaction is new
   if (latest.timestamp === lastTxTimestamp) return;
-
   lastTxTimestamp = latest.timestamp;
 
-  const table = document.getElementById("txTable");
-  table.innerHTML = ""; // clear previous row
+  const tbody = document.getElementById("txBody");
+  tbody.innerHTML = ""; // ✅ clear previous content completely
 
   const row = document.createElement("tr");
   row.innerHTML = `
@@ -170,10 +171,9 @@ async function loadTransactions() {
       <td>${latest.amount}</td>
       <td>${latest.status}</td>
   `;
-  table.appendChild(row);
+  tbody.appendChild(row);
 }
 
-// ✅ Poll every 2 seconds but only refresh if something new happened
 setInterval(loadTransactions, 2000);
 </script>
 
