@@ -128,5 +128,45 @@
         });
 </script>
 
+<h2>📜 Transaction History</h2>
+<table id="txTable">
+    <tr>
+        <th>Timestamp</th>
+        <th>Type</th>
+        <th>Account</th>
+        <th>From</th>
+        <th>To</th>
+        <th>Amount</th>
+        <th>Status</th>
+        <th>Fraud</th>
+    </tr>
+</table>
+
+<script>
+async function loadTransactions() {
+    const res = await fetch("/transactions");
+    const data = await res.json();
+    const table = document.getElementById("txTable");
+
+    data.forEach(tx => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+            <td>${tx.timestamp}</td>
+            <td>${tx.type}</td>
+            <td>${tx.account || "-"}</td>
+            <td>${tx.from || "-"}</td>
+            <td>${tx.to || "-"}</td>
+            <td>${tx.amount}</td>
+            <td>${tx.status}</td>
+            <td>${tx.fraud_detected ? "🚨 Yes" : "✅ No"}</td>
+        `;
+        table.appendChild(row);
+    });
+}
+
+window.onload = loadTransactions;
+</script>
+
+
 </body>
 </html>

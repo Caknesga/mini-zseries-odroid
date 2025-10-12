@@ -1,11 +1,13 @@
 from flask import Flask, request, jsonify, render_template
 import threading
 import json, os
+from datetime import datetime
 
 
 app = Flask(__name__)
 accounts = {"A": 1000, "B": 3000, "C": 1500000}
 lock = threading.Lock()  # Für Konsistenz
+transactions = []  # or load from 'transactions.json' if you want persistence
 
 def save_state():
     with open("accounts.json", "w") as f:
@@ -18,6 +20,23 @@ def load_state():
             accounts = json.load(f)
     else:
         accounts = {"A": 1000, "B": 2000, "C": 1500}
+
+def log_transaction(tx_type, account=None, from_acc=None, to_acc=None, amount=0, status="success"):
+    entry = {
+        "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "type": tx_type,
+        "account": account,
+        "from": from_acc,
+        "to": to_acc,
+        "amount": amount,
+        "status": status,
+       
+    }
+    transactions.append(entry)
+
+    # (Optional) Persist logs to a file
+    with open("transactions.json", "w") as f:
+        json.dump(transactions, f, indent=2)
 
 
 @app.route("/")
@@ -39,25 +58,32 @@ def deposit():
     account = request.json.get("account")
     amount = request.json.get("amount", 0)
     if account not in accounts:
+        log_transaction("deposit", account=account, amount=amount, status="failed")
         return jsonify({"error": "Account not found"}), 404
     with lock:
         accounts[account] += amount
         save_state()          # <-- FIX
-    return jsonify({"account": account, "balance": accounts[account]})
+        log_transaction("deposit", account=account, amount=amount)
+        return jsonify({"account": account, "balance": accounts[account]})
 
 @app.route("/withdraw", methods=["POST"])
 def withdraw():
     account = request.json.get("account")
     amount = request.json.get("amount", 0)
     if account not in accounts:
+        log_transaction("withdraw", account=account, amount=amount, status="failed")
+
         return jsonify({"error": "Account not found"}), 404
     with lock:
         if accounts[account] >= amount:
             accounts[account] -= amount
             save_state()
+            log_transaction("withdraw", account=account, amount=amount)
             return jsonify({"account": account, "balance": accounts[account]})
         else:
             save_state()
+            log_transaction("withdraw", account=account, amount=amount, status="failed")
+
             return jsonify({"error": "Not enough funds"}), 400
 
 @app.route("/transfer", methods=["POST"])
@@ -67,6 +93,8 @@ def transfer():
     amount = request.json.get("amount", 0)
 
     if from_account not in accounts or to_account not in accounts:
+        log_transaction("transfer", from_acc=from_account, to_acc=to_account, amount=amount, status="failed")
+
         return jsonify({"error": "One or both accounts not found"}), 404
 
     if from_account == to_account:
@@ -77,6 +105,8 @@ def transfer():
             accounts[from_account] -= amount
             accounts[to_account] += amount
             save_state()
+            log_transaction("transfer", from_acc=from_account, to_acc=to_account, amount=amount)
+
             return jsonify({
                 "from": from_account,
                 "to": to_account,
@@ -84,7 +114,13 @@ def transfer():
                 "balances": accounts
             })
         else:
+            log_transaction("transfer", from_acc=from_account, to_acc=to_account, amount=amount, status="failed")
+
             return jsonify({"error": "Not enough funds"}), 400
+        
+@app.route("/transactions", methods=["GET"])
+def get_transactions():
+    return jsonify(transactions)
 
 if __name__ == "__main__":
     load_state()
