@@ -114,8 +114,11 @@ def transfer():
             return jsonify({"error": "Not enough funds"}), 400
         
 @app.route("/transactions", methods=["GET"])
-def get_transactions():
-    return jsonify(transactions)
+def latest_transaction():
+    if transactions:
+        return jsonify(transactions[-1])  # only the last one
+    else:
+        return jsonify({})
 
 if __name__ == "__main__":
     load_state()
