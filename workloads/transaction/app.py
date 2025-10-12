@@ -115,10 +115,8 @@ def transfer():
         
 @app.route("/transactions", methods=["GET"])
 def latest_transaction():
-    if transactions:
-        return jsonify(transactions[-1])  # only the last one
-    else:
-        return jsonify({})
+   return jsonify(transactions)
+   
 
 if __name__ == "__main__":
     load_state()

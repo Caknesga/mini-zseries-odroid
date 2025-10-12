@@ -143,27 +143,36 @@
 </table>
 
 <script>
-  
+    let lastTxCount = 0;
 
- async function refreshTransactions() {
-    const res = await fetch("/latest_transaction");
-    const tx = await res.json();
-    if (!tx.timestamp) return; // no transactions yet
+    async function loadTransactions() {
+        const res = await fetch("/transactions");
+        const data = await res.json();
+        const table = document.getElementById("txTable");
+      
+        const latest = data[data.length - 1];
+    if (latest.timestamp === lastTxCount) return;
 
-    // Clear table and show only the newest one
-    const table = document.getElementById("txTable");
-    table.innerHTML = `
-        <tr>
-            <td>${tx.timestamp}</td>
-            <td>${tx.action}</td>
-            <td>${tx.account}</td>
-            <td>${tx.amount}</td>
-            <td>${tx.status}</td>
-        </tr>
-    `;
-}
+     if (data.length !== lastTxCount) {
+            lastTxCount = data.length;
+        data.slice().reverse().forEach(tx => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td>${tx.timestamp}</td>
+                <td>${tx.type}</td>
+                <td>${tx.account || "-"}</td>
+                <td>${tx.from || "-"}</td>
+                <td>${tx.to || "-"}</td>
+                <td>${tx.amount}</td>
+                <td>${tx.status}</td>
+                
+            `;
+            table.appendChild(row);
+        });
+       }
+    }
 
-
+   setInterval(loadTransactions, 2000);
 </script>
 
 
