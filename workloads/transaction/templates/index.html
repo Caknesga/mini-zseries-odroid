@@ -143,11 +143,15 @@
 </table>
 
 <script>
+    let lastTxCount = 0;
+
     async function loadTransactions() {
         const res = await fetch("/transactions");
         const data = await res.json();
         const table = document.getElementById("txTable");
-
+      
+     if (data.length !== lastTxCount) {
+            lastTxCount = data.length;
         data.slice().reverse().forEach(tx => {
             const row = document.createElement("tr");
             row.innerHTML = `
@@ -162,6 +166,7 @@
             `;
             table.appendChild(row);
         });
+       }
     }
 
    setInterval(loadTransactions, 2000);
