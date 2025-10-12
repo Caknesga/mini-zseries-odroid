@@ -143,36 +143,38 @@
 </table>
 
 <script>
-    let lastTxCount = 0;
+   let lastTxTimestamp = null;
 
-    async function loadTransactions() {
-        const res = await fetch("/transactions");
-        const data = await res.json();
-        const table = document.getElementById("txTable");
-      
-        const latest = data[data.length - 1];
-    if (latest.timestamp === lastTxCount) return;
+async function loadTransactions() {
+  const res = await fetch("/transactions");
+  const data = await res.json();
+  if (data.length === 0) return;
 
-     if (data.length !== lastTxCount) {
-            lastTxCount = data.length;
-        data.slice().reverse().forEach(tx => {
-            const row = document.createElement("tr");
-            row.innerHTML = `
-                <td>${tx.timestamp}</td>
-                <td>${tx.type}</td>
-                <td>${tx.account || "-"}</td>
-                <td>${tx.from || "-"}</td>
-                <td>${tx.to || "-"}</td>
-                <td>${tx.amount}</td>
-                <td>${tx.status}</td>
-                
-            `;
-            table.appendChild(row);
-        });
-       }
-    }
+  const latest = data[data.length - 1]; // ✅ only the newest transaction
 
-   setInterval(loadTransactions, 2000);
+  // ✅ Only update if this transaction is new
+  if (latest.timestamp === lastTxTimestamp) return;
+
+  lastTxTimestamp = latest.timestamp;
+
+  const table = document.getElementById("txTable");
+  table.innerHTML = ""; // clear previous row
+
+  const row = document.createElement("tr");
+  row.innerHTML = `
+      <td>${latest.timestamp}</td>
+      <td>${latest.type}</td>
+      <td>${latest.account || "-"}</td>
+      <td>${latest.from || "-"}</td>
+      <td>${latest.to || "-"}</td>
+      <td>${latest.amount}</td>
+      <td>${latest.status}</td>
+  `;
+  table.appendChild(row);
+}
+
+// ✅ Poll every 2 seconds but only refresh if something new happened
+setInterval(loadTransactions, 2000);
 </script>
 
 
