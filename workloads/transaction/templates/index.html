@@ -159,7 +159,6 @@ async function loadTransactions() {
   lastTxTimestamp = latest.timestamp;
 
   const tbody = document.getElementById("txBody");
-  tbody.innerHTML = ""; // ✅ clear previous content completely
 
   const row = document.createElement("tr");
   row.innerHTML = `
