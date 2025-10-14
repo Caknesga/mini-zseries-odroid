@@ -116,7 +116,16 @@ def transfer():
 @app.route("/transactions", methods=["GET"])
 def latest_transaction():
    return jsonify(transactions)
-   
+
+@app.route("/hardware")
+def hardware_status():
+    return jsonify({
+        "cpu": psutil.cpu_percent(),
+        "memory": psutil.virtual_memory().percent,
+        "disk": psutil.disk_usage("/").percent,
+        "uptime": time.time() - psutil.boot_time(),
+        "temperature": psutil.sensors_temperatures().get("cpu_thermal", [{}])[0].get("current")
+    }) 
 
 if __name__ == "__main__":
     load_state()
