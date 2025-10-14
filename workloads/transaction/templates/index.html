@@ -185,19 +185,15 @@ setInterval(loadTransactions, 2000);
   <p>Uptime: <span id="uptime">--</span> sec</p>
 </section>
 <script>
-    async function updateHardware() {
-    const res = await fetch("/hardware");
-    const hw = await res.json();
-
-    document.getElementById("cpuLoad").textContent = hw.cpu;
-    document.getElementById("cpuTemp").textContent = hw.temperature || "N/A";
-    document.getElementById("memory").textContent = hw.memory;
-    document.getElementById("disk").textContent = hw.disk;
-    document.getElementById("uptime").textContent = Math.floor(hw.uptime);
+async function loadHardware() {
+  const res = await fetch("/hardware");
+  const data = await res.json();
+  document.getElementById("cpu").textContent = data.cpu_percent + "%";
+  document.getElementById("memory").textContent = data.memory_percent + "%";
+  document.getElementById("disk").textContent = data.disk_percent + "%";
+  document.getElementById("temp").textContent = data.temperature + " °C";
 }
-
-setInterval(updateHardware, 5000);
-updateHardware();
+setInterval(loadHardware, 3000);
 
 </script>
 

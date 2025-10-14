@@ -4,6 +4,7 @@ import json, os
 from datetime import datetime
 import psutil
 import time
+import platform
 
 
 app = Flask(__name__)
@@ -121,29 +122,41 @@ def latest_transaction():
 
 @app.route("/hardware")
 def hardware_status():
-    cpu_percent = psutil.cpu_percent(interval=1)
-    mem = psutil.virtual_memory()
 
-    # Safe temperature read
-    temps = {}
-    if hasattr(psutil, "sensors_temperatures"):
+    cpu_percent = psutil.cpu_percent(interval=1)
+    cpu_freq = psutil.cpu_freq()
+    mem = psutil.virtual_memory()
+    disk = psutil.disk_usage('/')
+    net = psutil.net_io_counters()
+
+    # Fallback temperature for ARM (Odroid, RPi)
+    temperature = None
+    try:
+        with open("/sys/class/thermal/thermal_zone0/temp", "r") as f:
+            temperature = int(f.read()) / 1000.0
+    except FileNotFoundError:
         try:
             temps = psutil.sensors_temperatures()
+            if temps:
+                for _, entries in temps.items():
+                    if entries:
+                        temperature = entries[0].current
+                        break
         except Exception:
-            temps = {}
-    temperature = None
-    if temps:
-        for name, entries in temps.items():
-            if entries:
-                temperature = entries[0].current
-                break
+            pass
 
     return jsonify({
         "cpu_percent": cpu_percent,
+        "cpu_freq": cpu_freq._asdict() if cpu_freq else {},
         "memory_percent": mem.percent,
+        "disk_percent": disk.percent,
+        "net_sent_mb": round(net.bytes_sent / (1024 * 1024), 2),
+        "net_recv_mb": round(net.bytes_recv / (1024 * 1024), 2),
         "temperature": temperature if temperature else "Not supported",
-        "uptime": psutil.boot_time()
+        "uptime_seconds": int(time.time() - psutil.boot_time()),
+        "platform": platform.platform()
     })
+
 
 if __name__ == "__main__":
     load_state()
