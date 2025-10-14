@@ -3,6 +3,7 @@ import threading
 import json, os
 from datetime import datetime
 import psutil
+import time
 
 
 app = Flask(__name__)
@@ -120,13 +121,29 @@ def latest_transaction():
 
 @app.route("/hardware")
 def hardware_status():
+    cpu_percent = psutil.cpu_percent(interval=1)
+    mem = psutil.virtual_memory()
+
+    # Safe temperature read
+    temps = {}
+    if hasattr(psutil, "sensors_temperatures"):
+        try:
+            temps = psutil.sensors_temperatures()
+        except Exception:
+            temps = {}
+    temperature = None
+    if temps:
+        for name, entries in temps.items():
+            if entries:
+                temperature = entries[0].current
+                break
+
     return jsonify({
-        "cpu": psutil.cpu_percent(),
-        "memory": psutil.virtual_memory().percent,
-        "disk": psutil.disk_usage("/").percent,
-        "uptime": time.time() - psutil.boot_time(),
-        "temperature": psutil.sensors_temperatures().get("cpu_thermal", [{}])[0].get("current")
-    }) 
+        "cpu_percent": cpu_percent,
+        "memory_percent": mem.percent,
+        "temperature": temperature if temperature else "Not supported",
+        "uptime": psutil.boot_time()
+    })
 
 if __name__ == "__main__":
     load_state()
