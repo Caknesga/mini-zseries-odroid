@@ -178,13 +178,15 @@ setInterval(loadTransactions, 2000);
 
 <section id="hardware-monitor">
   <h2>📊 Hardware Status</h2>
-  <p>CPU Load: <span id="cpuLoad">--</span>%</p>
-  <p>CPU Temp: <span id="cpuTemp">--</span>°C</p>
+  <p>CPU Load: <span id="cpu">--</span>%</p>
   <p>Memory Usage: <span id="memory">--</span>%</p>
   <p>Disk Usage: <span id="disk">--</span>%</p>
-  <p>Uptime: <span id="uptime">--</span> sec</p>
+  <p>CPU Temp: <span id="temp">--</span>°C</p>
+  
 </section>
+
 <script>
+
 async function loadHardware() {
   const res = await fetch("/hardware");
   const data = await res.json();
