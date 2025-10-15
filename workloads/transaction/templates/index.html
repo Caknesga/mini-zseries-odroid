@@ -151,9 +151,11 @@
     <h2>Hardware Status</h2>
     <p>CPU Load: <span id="cpu">--</span>%</p>
     <p>CPU Load per Core: <span id="per_core">--</span>%</p>
-
+    <p>CPU Frequnz: <span id="freq">--</span>%</p>
+    <p>CPU Frequnz per Core: <span id="freq_per_core">--</span>%</p>
     <p>Memory Usage: <span id="memory">--</span>%</p>
     <p>Disk Usage: <span id="disk">--</span>%</p>
+    <p>IO Status: <span id="IO_status">--</span>%</p>
     <p>CPU Temp: <span id="temp">--</span>°C</p>
   </div>
 </div>
@@ -198,8 +200,13 @@ async function loadHardware() {
   const data = await res.json();
   document.getElementById("cpu").textContent = data.cpu_percent + "%";
   document.getElementById("per_core").textContent=data.per_core_cpu+"%";
+  document.getElementById("freq").textContent=data.cpu_freq+"MHz";
+  document.getElementById("freq_per_core").textContent=data.cpu_freq_per_cor+"MHz";
+
   document.getElementById("memory").textContent = data.memory_percent + "%";
   document.getElementById("disk").textContent = data.disk_percent + "%";
+  document.getElementById("IO_status").textContent = data.disk_io;
+
   document.getElementById("temp").textContent = data.temperature + " °C";
 }
 setInterval(loadHardware, 3000);
