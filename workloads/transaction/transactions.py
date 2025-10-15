@@ -27,9 +27,9 @@ def random_transaction():
         r = requests.post(f"{URL}/transfer", json={"from": account, "to": to_acc, "amount": amount})
         print(f"Transfer {amount} from {account} to {to_acc}: {r.json()}")
 
-# 10 Threads
+# 100 Threads
 threads = []
-for _ in range(10):
+for _ in range(100):
     t = threading.Thread(target=random_transaction)
     t.start()
     threads.append(t)
