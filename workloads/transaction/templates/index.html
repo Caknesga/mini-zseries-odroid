@@ -155,7 +155,6 @@
     <p>CPU Frequnz per Core: <span id="freq_per_core">--</span>%</p>
     <p>Memory Usage: <span id="memory">--</span>%</p>
     <p>Disk Usage: <span id="disk">--</span>%</p>
-    <p>IO Status: <span id="IO_status">--</span>%</p>
     <p>CPU Temp: <span id="temp">--</span>°C</p>
   </div>
 </div>
@@ -198,14 +197,22 @@ setInterval(loadTransactions, 2000);
 async function loadHardware() {
   const res = await fetch("/hardware");
   const data = await res.json();
+
+  document.getElementById("platfrom").textContent = data.platform ;
+
   document.getElementById("cpu").textContent = data.cpu_percent + "%";
   document.getElementById("per_core").textContent=data.per_core_cpu+"%";
-  document.getElementById("freq").textContent=data.cpu_freq+"MHz";
-  document.getElementById("freq_per_core").textContent=data.cpu_freq_per_cor+"MHz";
+ if (data.cpu_freq) {
+    document.getElementById("freq").textContent = data.cpu_freq.current + " MHz";
+  }
+   if (data.cpu_freq_per_core) {
+     document.getElementById("freq_per_core").textContent=data.cpu_freq_per_core+"MHz";
+  }
+ 
 
   document.getElementById("memory").textContent = data.memory_percent + "%";
   document.getElementById("disk").textContent = data.disk_percent + "%";
-  document.getElementById("IO_status").textContent = data.disk_io;
+
 
   document.getElementById("temp").textContent = data.temperature + " °C";
 }
