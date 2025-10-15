@@ -128,7 +128,10 @@ def hardware_status():
     mem = psutil.virtual_memory()
     disk = psutil.disk_usage('/')
     net = psutil.net_io_counters()
-
+    per_core_cpu= psutil.cpu_percent(percpu=True)
+    per_core_freq = [f._asdict() for f in psutil.cpu_freq(percpu=True)]     
+    io_stats = psutil.disk_io_counters()._asdict()
+    
     # Fallback temperature for ARM (Odroid, RPi)
     temperature = None
     try:
@@ -147,11 +150,19 @@ def hardware_status():
 
     return jsonify({
         "cpu_percent": cpu_percent,
+        "per_core_cpu": per_core_cpu,
         "cpu_freq": cpu_freq._asdict() if cpu_freq else {},
+        "cpu_freq_per_core": per_core_freq,
         "memory_percent": mem.percent,
         "disk_percent": disk.percent,
-        "net_sent_mb": round(net.bytes_sent / (1024 * 1024), 2),
-        "net_recv_mb": round(net.bytes_recv / (1024 * 1024), 2),
+        "disk_io": io_stats,
+        "network": {
+            "bytes_sent": net.bytes_sent,
+            "bytes_recv": net.bytes_recv,
+            "packets_sent": net.packets_sent,
+            "packets_recv": net.packets_recv
+        },
+        "load_avg": os.getloadavg(),
         "temperature": temperature if temperature else "Not supported",
         "uptime_seconds": int(time.time() - psutil.boot_time()),
         "platform": platform.platform()
