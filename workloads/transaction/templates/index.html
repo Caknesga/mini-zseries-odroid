@@ -150,6 +150,8 @@
   <div class="hardware-section">
     <h2>Hardware Status</h2>
     <p>CPU Load: <span id="cpu">--</span>%</p>
+    <p>CPU Load per Core: <span id="per_core">--</span>%</p>
+
     <p>Memory Usage: <span id="memory">--</span>%</p>
     <p>Disk Usage: <span id="disk">--</span>%</p>
     <p>CPU Temp: <span id="temp">--</span>°C</p>
@@ -195,6 +197,7 @@ async function loadHardware() {
   const res = await fetch("/hardware");
   const data = await res.json();
   document.getElementById("cpu").textContent = data.cpu_percent + "%";
+  document.getElementById("per_core").textContent=data.per_core_cpu+"%";
   document.getElementById("memory").textContent = data.memory_percent + "%";
   document.getElementById("disk").textContent = data.disk_percent + "%";
   document.getElementById("temp").textContent = data.temperature + " °C";
