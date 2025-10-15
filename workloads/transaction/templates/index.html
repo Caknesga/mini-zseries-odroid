@@ -198,7 +198,6 @@ setInterval(loadTransactions, 2000);
 async function loadHardware() {
   const res = await fetch("/hardware");
   const data = await res.json();
-document.getElementById("platform").textContent = data.platform;
 
   document.getElementById("cpu").textContent = data.cpu_percent + "%";
   document.getElementById("per_core").textContent=data.per_core_cpu+"%";
@@ -215,6 +214,8 @@ document.getElementById("platform").textContent = data.platform;
 
 
   document.getElementById("temp").textContent = data.temperature + " °C";
+    document.getElementById("platform").textContent = data.platform;
+
 }
 setInterval(loadHardware, 3000);
 
