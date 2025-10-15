@@ -149,7 +149,7 @@
 
   <div class="hardware-section">
     <h2>Hardware Status</h2>
-    <p>Platform: <span id="platform">--</span></p>
+    
 
     <p>CPU Load: <span id="cpu">--</span>%</p>
     <p>CPU Load per Core: <span id="per_core">--</span>%</p>
@@ -198,7 +198,8 @@ setInterval(loadTransactions, 2000);
 async function loadHardware() {
   const res = await fetch("/hardware");
   const data = await res.json();
-
+  
+ document.getElementById("platform").textContent = data.platform;
   document.getElementById("cpu").textContent = data.cpu_percent + "%";
   document.getElementById("per_core").textContent=data.per_core_cpu+"%";
  if (data.cpu_freq) {
