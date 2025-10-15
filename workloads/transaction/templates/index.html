@@ -128,21 +128,34 @@
         });
 </script>
 
-<h2> Transaction History</h2>
-<table id="txTable">
-  <thead>
-    <tr>
-      <th>Time</th>
-      <th>Type</th>
-      <th>Account</th>
-      <th>From</th>
-      <th>To</th>
-      <th>Amount</th>
-      <th>Status</th>
-    </tr>
-  </thead>
-  <tbody id="txBody"></tbody>
-</table>
+<div class="dashboard-row">
+  <div class="transaction-section">
+    <h2>Transaction History</h2>
+    <table id="txTable">
+      <thead>
+        <tr>
+          <th>Time</th>
+          <th>Type</th>
+          <th>Account</th>
+          <th>From</th>
+          <th>To</th>
+          <th>Amount</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="txBody"></tbody>
+    </table>
+  </div>
+
+  <div class="hardware-section">
+    <h2>Hardware Status</h2>
+    <p>CPU Load: <span id="cpu">--</span>%</p>
+    <p>Memory Usage: <span id="memory">--</span>%</p>
+    <p>Disk Usage: <span id="disk">--</span>%</p>
+    <p>CPU Temp: <span id="temp">--</span>°C</p>
+  </div>
+</div>
+
 
 <script>
    let lastTxTimestamp = null;
@@ -175,15 +188,6 @@ async function loadTransactions() {
 
 setInterval(loadTransactions, 2000);
 </script>
-
-<section id="hardware-monitor">
-  <h2>📊 Hardware Status</h2>
-  <p>CPU Load: <span id="cpu">--</span>%</p>
-  <p>Memory Usage: <span id="memory">--</span>%</p>
-  <p>Disk Usage: <span id="disk">--</span>%</p>
-  <p>CPU Temp: <span id="temp">--</span>°C</p>
-  
-</section>
 
 <script>
 

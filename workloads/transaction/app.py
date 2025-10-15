@@ -4,7 +4,7 @@ import json, os
 from datetime import datetime
 import psutil
 import time
-import platform
+import platform 
 
 
 app = Flask(__name__)

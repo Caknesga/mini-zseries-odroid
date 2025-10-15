@@ -68,3 +68,40 @@ input[type="number"] {
 form {
     margin-top: 10px;
 }
+.dashboard-row {
+  display: flex;
+  gap: 2rem; /* space between the two sections */
+  margin-top: 2rem;
+}
+
+.transaction-section {
+  flex: 2;
+  background: #f4f4f4;
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.hardware-section {
+  flex: 1;
+  background: #f9f9f9;
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+#txTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+#txTable th, #txTable td {
+  border: 1px solid #ccc;
+  padding: 0.5rem;
+  text-align: center;
+}
+
+#txTable th {
+  background-color: #0f62fe; /* IBM Blue */
+  color: white;
+}
