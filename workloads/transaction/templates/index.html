@@ -149,7 +149,6 @@
 
   <div class="hardware-section">
     <h2>Hardware Status</h2>
-    <p>Platform: <span id="platform">--</span>%</p>
     <p>CPU Load: <span id="cpu">--</span>%</p>
     <p>CPU Load per Core: <span id="per_core">--</span>%</p>
     <p>CPU Frequnz: <span id="freq">--</span>%</p>
@@ -199,17 +198,15 @@ async function loadHardware() {
   const res = await fetch("/hardware");
   const data = await res.json();
 
-  document.getElementById("platfrom").textContent = data.platform ;
-
   document.getElementById("cpu").textContent = data.cpu_percent + "%";
   document.getElementById("per_core").textContent=data.per_core_cpu+"%";
  if (data.cpu_freq) {
     document.getElementById("freq").textContent = data.cpu_freq.current + " MHz";
   }
-   if (data.cpu_freq_per_core) {
+
+ if (data.cpu_freq_per_core) {
      document.getElementById("freq_per_core").textContent=data.cpu_freq_per_core+"MHz";
   }
- 
 
   document.getElementById("memory").textContent = data.memory_percent + "%";
   document.getElementById("disk").textContent = data.disk_percent + "%";
