@@ -149,7 +149,8 @@
 
   <div class="hardware-section">
     <h2>Hardware Status</h2>
-    
+
+   <p>Platform: <span id="platform">--</span></p>
 
     <p>CPU Load: <span id="cpu">--</span>%</p>
     <p>CPU Load per Core: <span id="per_core">--</span>%</p>
@@ -199,26 +200,22 @@ async function loadHardware() {
   const res = await fetch("/hardware");
   const data = await res.json();
 
-
-  document.getElementById("cpu").textContent = data.cpu_percent + "%";
-  document.getElementById("per_core").textContent=data.per_core_cpu+"%";
+ document.getElementById("platform").textContent = data.platform;
+  document.getElementById("cpu").textContent = data.cpu_percent ;
+  document.getElementById("per_core").textContent=data.per_core_cpu;
  if (data.cpu_freq) {
-    document.getElementById("freq").textContent = data.cpu_freq.current + " MHz";
-  }
-
- if (data.cpu_freq_per_core) {
-     document.getElementById("freq_per_core").textContent=data.cpu_freq_per_core+"MHz";
+    document.getElementById("freq").textContent = data.cpu_freq.current;
   }
 
   document.getElementById("memory").textContent = data.memory_percent + "%";
   document.getElementById("disk").textContent = data.disk_percent + "%";
 
 
-  document.getElementById("temp").textContent = data.temperature + " °C";
+  document.getElementById("temp").textContent = data.temperature + "°C";
    
 
 }
-setInterval(loadHardware, 3000);
+setInterval(loadHardware, 2000);
 
 </script>
 
