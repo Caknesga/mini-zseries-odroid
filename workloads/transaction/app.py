@@ -48,6 +48,7 @@ def index():
 @app.route("/balance/<account>", methods=["GET"])
 def get_balance(account):
     if account not in accounts:
+        save_state()
         return jsonify({"error": "Account not found"}), 404
     return jsonify({"account": account, "balance": accounts[account]})
 
