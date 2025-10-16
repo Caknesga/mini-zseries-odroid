@@ -8,7 +8,7 @@ import platform
 
 
 app = Flask(__name__)
-accounts = {"A": 1000, "B": 3000, "C": 1500000}
+accounts = {"Deniz": 1000, "Markus": 3000, "IBM": 1500000}
 lock = threading.Lock()  # Für Konsistenz
 transactions = []  # or load from 'transactions.json' if you want persistence
 
@@ -41,7 +41,7 @@ def log_transaction(tx_type, account=None, from_acc=None, to_acc=None, amount=0,
 @app.route("/")
 def index():
     # Beispiel in Flask
-    thresholds = {"A": 100, "B": 500, "C": 100000}
+    thresholds = {"Deniz": 100, "Markus": 500, "IBM": 100000}
     return render_template("index.html", accounts=accounts, thresholds=thresholds)
 
         
