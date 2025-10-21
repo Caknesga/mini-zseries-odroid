@@ -5,7 +5,7 @@ from sklearn.metrics import classification_report
 import pandas as pd, joblib
 from sklearn.preprocessing import LabelEncoder
 
-
+model = joblib.load("fraud_model.pkl")
 np.random.seed(42)
 n = 1000
 
@@ -37,16 +37,9 @@ df = pd.DataFrame(data, columns=["account_type", "amount", "international", "nig
 le = LabelEncoder()
 df["account_type"] = le.fit_transform(df["account_type"])  # student=2, ceo=0, etc.
 
-X = df[["account_type", "amount", "international", "night"]]
-y = df["fraud"]
+X_new = df[["account_type", "amount", "international", "night"]]
+y_new= df["fraud"]
 
-# Train/Test
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25)
-model = LogisticRegression(max_iter=500)
-model.fit(X_train, y_train)
-preds = model.predict(X_test)
-
-print(classification_report(y_test, preds, digits=3))
+model.fit(X_new, y_new)
 
 joblib.dump(model, "fraud_model.pkl")
-
