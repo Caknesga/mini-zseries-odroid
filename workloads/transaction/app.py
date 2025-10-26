@@ -195,9 +195,4 @@ def hardware_status():
 if __name__ == "__main__":
     load_state()
     app.run(host="0.0.0.0", port=5050)
-    try:
-        fraud_model = joblib.load("fraud_model.pkl")
-        print("✅ Fraud model loaded successfully.")
-    except:
-        fraud_model = None
-        print("⚠️ Warning: Fraud model not found.")
+
