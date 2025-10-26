@@ -5,12 +5,16 @@ from datetime import datetime
 import psutil
 import time
 import platform 
+import joblib
+import numpy as np
 
 
 app = Flask(__name__)
 accounts = {"Deniz": 1000, "Markus": 3000, "IBM": 1500000}
 lock = threading.Lock()  # Für Konsistenz
 transactions = []  # or load from 'transactions.json' if you want persistence
+account_stats = {} # to track stats per account for fraud detection
+fraud_model = joblib.load("fraud_model.pkl")
 
 def save_state():
     with open("accounts.json", "w") as f:
@@ -37,6 +41,31 @@ def log_transaction(tx_type, account=None, from_acc=None, to_acc=None, amount=0,
     }
     transactions.append(entry)
 
+def update_account_stats(account, amount): # track stats for fraud detection 
+    if account not in account_stats:
+        account_stats[account] = {"count": 0, "total": 0, "mean": 0}
+    stats = account_stats[account]
+    stats["count"] += 1
+    stats["total"] += amount
+    stats["mean"] = stats["total"] / stats["count"]
+
+def predict_fraud(account, amount): 
+    """Combine global model with local account behavior."""
+    if fraud_model is None:
+        return 0.0
+
+    # Global model baseline probability
+    base_prob = fraud_model.predict_proba(np.array([[amount]]))[0][1]
+
+    # Local account behavior adjustment
+    if account in account_stats and account_stats[account]["count"] > 5:
+        mean_amt = account_stats[account]["mean"]
+        deviation = abs(amount - mean_amt) / (mean_amt + 1)
+        adjusted_prob = min(1.0, base_prob + deviation * 0.3)
+    else:
+        adjusted_prob = base_prob
+
+    return round(adjusted_prob, 3)
 
 @app.route("/")
 def index():
@@ -63,6 +92,8 @@ def deposit():
         accounts[account] += amount
         save_state()          # <-- FIX
         log_transaction("deposit", account=account, amount=amount)
+        update_account_stats(account, amount)
+
         return jsonify({"account": account, "balance": accounts[account]})
 
 @app.route("/withdraw", methods=["POST"])
@@ -78,6 +109,7 @@ def withdraw():
             accounts[account] -= amount
             save_state()
             log_transaction("withdraw", account=account, amount=amount)
+            update_account_stats(account, amount)
             return jsonify({"account": account, "balance": accounts[account]})
         else:
             save_state()
@@ -105,7 +137,8 @@ def transfer():
             accounts[to_account] += amount
             save_state()
             log_transaction("transfer", from_acc=from_account, to_acc=to_account, amount=amount)
-
+            update_account_stats(from_account, amount)
+            update_account_stats(to_account, amount)
             return jsonify({
                 "from": from_account,
                 "to": to_account,
@@ -120,6 +153,10 @@ def transfer():
 @app.route("/transactions", methods=["GET"])
 def latest_transaction():
    return jsonify(transactions)
+
+@app.route("/account_stats")
+def get_stats():
+    return jsonify(account_stats)
 
 @app.route("/hardware")
 def hardware_status():
@@ -170,6 +207,13 @@ def hardware_status():
     })
 
 
+
 if __name__ == "__main__":
     load_state()
     app.run(host="0.0.0.0", port=5050)
+    try:
+        fraud_model = joblib.load("fraud_model.pkl")
+        print("✅ Fraud model loaded successfully.")
+    except:
+        fraud_model = None
+        print("⚠️ Warning: Fraud model not found.")

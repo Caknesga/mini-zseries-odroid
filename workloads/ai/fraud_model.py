@@ -7,37 +7,23 @@ from sklearn.preprocessing import LabelEncoder
 
 
 np.random.seed(42)
-n = 1000
+n = 2000
 
-account_types = ["student", "worker", "business"]
 data = []
 
-for acc in account_types:
-    for _ in range(n):
-        amount = np.random.randint(1, 20000)
-        intl = np.random.randint(0, 2)
-        night = np.random.randint(0, 2)
-        
-        # Fraud logic per profile
-        if acc == "student":
-            fraud = 1 if amount > 500 else 0
-        elif acc == "worker":
-            fraud = 1 if amount > 1000 else 0
-        elif acc == "business":
-            fraud = 1 if amount > 30000 else 0
+for _ in range(n):
+    amount = np.random.randint(1, 20000)
+    fraud = 1 if amount > 5000 else 0
+    # Add some randomness       
+    if np.random.rand() < 0.05: 
+        fraud = 1 - fraud
 
-        # Add some randomness (5% noise)
-        if np.random.rand() < 0.05:
-            fraud = 1 - fraud
+        data.append([amount, fraud])
 
-        data.append([acc, amount, intl, night, fraud])
+df = pd.DataFrame(data, columns=[ "amount", "fraud"])
 
-df = pd.DataFrame(data, columns=["account_type", "amount", "international", "night", "fraud"])
 
-le = LabelEncoder()
-df["account_type"] = le.fit_transform(df["account_type"])  # student=2, ceo=0, etc.
-
-X = df[["account_type", "amount", "international", "night"]]
+X = df[["amount"]]
 y = df["fraud"]
 
 # Train/Test
@@ -49,4 +35,4 @@ preds = model.predict(X_test)
 print(classification_report(y_test, preds, digits=3))
 
 joblib.dump(model, "fraud_model.pkl")
-
+print("✅ Simple fraud model saved as fraud_model.pkl")
