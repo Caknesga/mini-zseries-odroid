@@ -13,8 +13,14 @@ app = Flask(__name__)
 accounts = {"Deniz": 1000, "Markus": 3000, "IBM": 1500000}
 lock = threading.Lock()  # Für Konsistenz
 transactions = []  # or load from 'transactions.json' if you want persistence
-account_stats = {} # to track stats per account for fraud detection
-fraud_model = joblib.load("fraud_model.pkl")
+# Load your pre-trained model
+model = joblib.load("fraud_model.pkl")
+
+def predict_fraud(amount):
+    # Model was trained only on "amount"
+    X = np.array([[amount]])
+    prediction = model.predict(X)[0]  # 0 = not fraud, 1 = fraud
+    return "FRAUD" if prediction == 1 else "OK"
 
 def save_state():
     with open("accounts.json", "w") as f:
@@ -41,31 +47,6 @@ def log_transaction(tx_type, account=None, from_acc=None, to_acc=None, amount=0,
     }
     transactions.append(entry)
 
-def update_account_stats(account, amount): # track stats for fraud detection 
-    if account not in account_stats:
-        account_stats[account] = {"count": 0, "total": 0, "mean": 0}
-    stats = account_stats[account]
-    stats["count"] += 1
-    stats["total"] += amount
-    stats["mean"] = stats["total"] / stats["count"]
-
-def predict_fraud(account, amount): 
-    """Combine global model with local account behavior."""
-    if fraud_model is None:
-        return 0.0
-
-    # Global model baseline probability
-    base_prob = fraud_model.predict_proba(np.array([[amount]]))[0][1]
-
-    # Local account behavior adjustment
-    if account in account_stats and account_stats[account]["count"] > 5:
-        mean_amt = account_stats[account]["mean"]
-        deviation = abs(amount - mean_amt) / (mean_amt + 1)
-        adjusted_prob = min(1.0, base_prob + deviation * 0.3)
-    else:
-        adjusted_prob = base_prob
-
-    return round(adjusted_prob, 3)
 
 @app.route("/")
 def index():
@@ -85,15 +66,19 @@ def get_balance(account):
 def deposit():
     account = request.json.get("account")
     amount = request.json.get("amount", 0)
+    
     if account not in accounts:
         log_transaction("deposit", account=account, amount=amount, status="failed")
         return jsonify({"error": "Account not found"}), 404
+    result = predict_fraud(amount)
+    if result == "FRAUD":
+        log_transaction("deposit", account=account, amount=amount, status="fraud")
+        return jsonify({"warning": "Possible fraud detected", "account": account, "amount": amount})
     with lock:
         accounts[account] += amount
         save_state()          # <-- FIX
         log_transaction("deposit", account=account, amount=amount)
-        update_account_stats(account, amount)
-
+        
         return jsonify({"account": account, "balance": accounts[account]})
 
 @app.route("/withdraw", methods=["POST"])
@@ -104,12 +89,16 @@ def withdraw():
         log_transaction("withdraw", account=account, amount=amount, status="failed")
 
         return jsonify({"error": "Account not found"}), 404
+    result = predict_fraud(amount)      
+    if result == "FRAUD":
+        log_transaction("withdraw", account=account, amount=amount, status="fraud")
+        return jsonify({"warning": "Possible fraud detected", "account": account, "amount": amount})
     with lock:
         if accounts[account] >= amount:
             accounts[account] -= amount
             save_state()
             log_transaction("withdraw", account=account, amount=amount)
-            update_account_stats(account, amount)
+        
             return jsonify({"account": account, "balance": accounts[account]})
         else:
             save_state()
@@ -130,15 +119,13 @@ def transfer():
 
     if from_account == to_account:
         return jsonify({"error": "Source and destination must be different"}), 400
-
+  
     with lock:
         if accounts[from_account] >= amount:
             accounts[from_account] -= amount
             accounts[to_account] += amount
             save_state()
             log_transaction("transfer", from_acc=from_account, to_acc=to_account, amount=amount)
-            update_account_stats(from_account, amount)
-            update_account_stats(to_account, amount)
             return jsonify({
                 "from": from_account,
                 "to": to_account,
@@ -154,11 +141,8 @@ def transfer():
 def latest_transaction():
    return jsonify(transactions)
 
-@app.route("/account_stats")
-def get_stats():
-    return jsonify(account_stats)
 
-@app.route("/hardware")
+@app.route("/hardware") # System information
 def hardware_status():
 
     cpu_percent = psutil.cpu_percent(interval=1)
