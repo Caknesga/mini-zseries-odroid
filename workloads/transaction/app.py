@@ -15,14 +15,7 @@ app = Flask(__name__)
 accounts = {"Deniz": 1000, "Markus": 3000, "IBM": 1500000}
 lock = threading.Lock()  # Für Konsistenz
 transactions = []  # or load from 'transactions.json' if you want persistence
-# Load your pre-trained model
-model = joblib.load("fraud_model.pkl")
 
-def predict_fraud(amount):
-    # Model was trained only on "amount"
-    X = np.array([[amount]])
-    prediction = model.predict(X)[0]  # 0 = not fraud, 1 = fraud
-    return "FRAUD" if prediction == 1 else "OK"
 
 def save_state():
     with open("accounts.json", "w") as f:
