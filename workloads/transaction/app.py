@@ -7,6 +7,8 @@ import time
 import platform 
 import joblib
 import numpy as np
+from ai.infer_lr import predict_proba_amount  # add at top
+
 
 
 app = Flask(__name__)
@@ -70,10 +72,9 @@ def deposit():
     if account not in accounts:
         log_transaction("deposit", account=account, amount=amount, status="failed")
         return jsonify({"error": "Account not found"}), 404
-    result = predict_fraud(amount)
-    if result == "FRAUD":
-        log_transaction("deposit", account=account, amount=amount, status="fraud")
-        return jsonify({"warning": "Possible fraud detected", "account": account, "amount": amount})
+    prob = predict_proba_amount(amount)
+    log_transaction("deposit", account=account, amount=amount, status=f"fraud_prob={prob:.2f}")
+
     with lock:
         accounts[account] += amount
         save_state()          # <-- FIX
@@ -89,10 +90,8 @@ def withdraw():
         log_transaction("withdraw", account=account, amount=amount, status="failed")
 
         return jsonify({"error": "Account not found"}), 404
-    result = predict_fraud(amount)      
-    if result == "FRAUD":
-        log_transaction("withdraw", account=account, amount=amount, status="fraud")
-        return jsonify({"warning": "Possible fraud detected", "account": account, "amount": amount})
+    prob = predict_proba_amount(amount)
+    log_transaction("withdraw", account=account, amount=amount, status=f"fraud_prob={prob:.2f}")
     with lock:
         if accounts[account] >= amount:
             accounts[account] -= amount
