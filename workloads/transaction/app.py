@@ -7,7 +7,7 @@ import time
 import platform 
 import joblib
 import numpy as np
-from workloads.ai.infer_lr import predict_proba_amount 
+# from workloads.ai.infer_lr import predict_proba_amount 
 
 
 
@@ -66,7 +66,7 @@ def deposit():
         log_transaction("deposit", account=account, amount=amount, status="failed")
         return jsonify({"error": "Account not found"}), 404
     try:
-        prob = predict_proba_amount(amount)
+       # prob = predict_proba_amount(amount)
         log_transaction("deposit", account=account, amount=amount, status=f"fraud_prob={prob:.2f}")
     except Exception as e:
         # If prediction fails, continue without fraud check
@@ -87,7 +87,7 @@ def withdraw():
 
         return jsonify({"error": "Account not found"}), 404
     try:
-        prob = predict_proba_amount(amount)
+       # prob = predict_proba_amount(amount)
         log_transaction("deposit", account=account, amount=amount, status=f"fraud_prob={prob:.2f}")
     except Exception as e:
         # If prediction fails, continue without fraud check
