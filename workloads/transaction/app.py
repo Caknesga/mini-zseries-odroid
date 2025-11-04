@@ -7,14 +7,14 @@ import time
 import platform 
 import joblib
 import numpy as np
-#from workloads.ai.infer_lr import predict_proba_amount  # add at top
+from ..ai.infer_lr import predict_proba_amount 
 
 
 
 app = Flask(__name__)
 accounts = {"Deniz": 1000, "Markus": 3000, "IBM": 1500000}
 lock = threading.Lock()  # Für Konsistenz
-transactions = []  # or load from 'transactions.json' if you want persistence
+transactions = []  # load from 'transactions.json' 
 
 
 def save_state():
@@ -65,7 +65,7 @@ def deposit():
     if account not in accounts:
         log_transaction("deposit", account=account, amount=amount, status="failed")
         return jsonify({"error": "Account not found"}), 404
-    # prob = predict_proba_amount(amount)
+    prob = predict_proba_amount(amount)
     log_transaction("deposit", account=account, amount=amount, status=f"fraud_prob={prob:.2f}")
 
     with lock:
@@ -83,7 +83,7 @@ def withdraw():
         log_transaction("withdraw", account=account, amount=amount, status="failed")
 
         return jsonify({"error": "Account not found"}), 404
-   #  prob = predict_proba_amount(amount)
+    prob = predict_proba_amount(amount)
     log_transaction("withdraw", account=account, amount=amount, status=f"fraud_prob={prob:.2f}")
     with lock:
         if accounts[account] >= amount:
