@@ -140,6 +140,9 @@ def transfer():
 def latest_transaction():
    return jsonify(transactions)
 
+@app.route("/hardware_monitor")
+def hardware_monitor_page():
+    return render_template("hardware_monitor.html")
 
 @app.route("/hardware") # System information
 def hardware_status():
