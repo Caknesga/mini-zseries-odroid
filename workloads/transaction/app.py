@@ -65,7 +65,7 @@ def deposit():
     if account not in accounts:
         log_transaction("deposit", account=account, amount=amount, status="failed")
         return jsonify({"error": "Account not found"}), 404
-    prob = predict_proba_amount(amount)
+    # prob = predict_proba_amount(amount)
     log_transaction("deposit", account=account, amount=amount, status=f"fraud_prob={prob:.2f}")
 
     with lock:
@@ -83,7 +83,7 @@ def withdraw():
         log_transaction("withdraw", account=account, amount=amount, status="failed")
 
         return jsonify({"error": "Account not found"}), 404
-    prob = predict_proba_amount(amount)
+   #  prob = predict_proba_amount(amount)
     log_transaction("withdraw", account=account, amount=amount, status=f"fraud_prob={prob:.2f}")
     with lock:
         if accounts[account] >= amount:
