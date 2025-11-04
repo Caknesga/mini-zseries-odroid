@@ -7,7 +7,7 @@ import time
 import platform 
 import joblib
 import numpy as np
-from ..ai.infer_lr import predict_proba_amount 
+from workloads.ai.infer_lr import predict_proba_amount 
 
 
 
