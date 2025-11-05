@@ -38,8 +38,20 @@
 
 <div class="card" style="text-align:center;">
   <h3>🧠 Simulate AI Inference</h3>
-  <button class="btn-primary" onclick="startFakeAI()">Start Load</button>
-  <button class="btn-secondary" onclick="stopFakeAI()">Stop Load</button>
+
+  <div style="display:flex; gap:12px; justify-content:center; align-items:center;">
+    <label>Intensity:</label>
+    <input id="aiIntensity" type="number" value="500000" min="100000" step="50000" style="width:100px;">
+
+    <label>Workers:</label>
+    <input id="aiWorkers" type="number" value="2" min="1" max="4" style="width:70px;">
+  </div>
+
+  <div style="margin-top:12px;">
+    <button class="btn-primary" onclick="startFakeAI()">Start Load</button>
+    <button class="btn-secondary" onclick="stopFakeAI()">Stop Load</button>
+  </div>
+
   <p id="aiStatus" style="margin-top:10px; font-weight:600;"></p>
 </div>
 
@@ -78,7 +90,7 @@ async function generateTransactions() {
   const resultEl = document.getElementById("txResult");
 
   if (isNaN(count) || count <= 0) {
-    resultEl.textContent = "⚠️ Please enter a valid number.";
+    resultEl.textContent = " Please enter a valid number.";
     resultEl.style.color = "red";
     return;
   }
@@ -92,15 +104,15 @@ async function generateTransactions() {
     const data = await res.json();
 
     if (res.ok) {
-      resultEl.textContent = `✅ ${data.generated} transactions simulated successfully.`;
+      resultEl.textContent = `${data.generated} transactions simulated successfully.`;
       resultEl.style.color = "green";
     } else {
-      resultEl.textContent = `❌ Error: ${data.error}`;
+      resultEl.textContent = `Error: ${data.error}`;
       resultEl.style.color = "red";
     }
   } catch (err) {
     console.error(err);
-    resultEl.textContent = "⚠️ Server not reachable.";
+    resultEl.textContent = "Server not reachable.";
     resultEl.style.color = "red";
   }
 }
@@ -108,19 +120,22 @@ async function generateTransactions() {
 
 <script>
 async function startFakeAI() {
-  const res = await fetch("/fake_ai_start", { method: "POST" });
+  const intensity = parseInt(document.getElementById("aiIntensity").value);
+  const workers = parseInt(document.getElementById("aiWorkers").value);
+  const res = await fetch("/fake_ai_start", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({ intensity, workers })
+  });
   const data = await res.json();
   const status = document.getElementById("aiStatus");
-  status.textContent = data.status === "started" ? `Fake AI started (PID ${data.pid})` : "Already running";
-  status.style.color = "green";
-}
-
-async function stopFakeAI() {
-  const res = await fetch("/fake_ai_stop", { method: "POST" });
-  const data = await res.json();
-  const status = document.getElementById("aiStatus");
-  status.textContent = "Stopped";
-  status.style.color = "orange";
+  if (data.status === "started") {
+    status.textContent = `Started ${data.workers} workers (PID ${data.pid}, intensity ${data.intensity})`;
+    status.style.color = "green";
+  } else {
+    status.textContent = "Already running";
+    status.style.color = "orange";
+  }
 }
 </script>
 
