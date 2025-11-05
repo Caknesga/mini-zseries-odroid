@@ -229,7 +229,7 @@ def fake_ai_start():
     return jsonify({"status": "started", "pid": ai_proc.pid, "intensity": intensity, "workers": workers})
 
 
-
+#fake ai stop
 @app.route("/fake_ai_stop", methods=["POST"])
 def fake_ai_stop():
     global ai_proc
@@ -242,6 +242,35 @@ def fake_ai_stop():
         f.write("stop")
 
     return jsonify({"status": "stopping"})
+
+# pin cores 
+@app.route("/pin_cores", methods=["POST"])
+def pin_cores():
+    try:
+        data = request.get_json(force=True)
+        mode = data.get("mode", "balance")  # balance / ai_priority / tx_priority
+
+        pid = os.getpid()
+        process = psutil.Process(pid)
+
+        if mode == "balance":
+            # Evenly spread load
+            process.cpu_affinity([0,1,2,3,4,5,6,7])
+            message = "CPU cores balanced across all 8 cores."
+        elif mode == "ai_priority":
+            # Pin Flask to low cores, free high cores for AI
+            process.cpu_affinity([0,1,2,3])
+            message = "Flask pinned to cores 0-3. AI cores freed (4-7)."
+        elif mode == "tx_priority":
+            # Pin AI load to high cores, Flask to high-speed cores
+            process.cpu_affinity([4,5,6,7])
+            message = "Flask pinned to cores 4-7 for high-priority transactions."
+        else:
+            return jsonify({"error": "Invalid mode"}), 400
+
+        return jsonify({"status": "success", "mode": mode, "message": message})
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 if __name__ == "__main__":
     load_state()

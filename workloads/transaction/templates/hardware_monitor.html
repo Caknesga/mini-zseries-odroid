@@ -59,6 +59,40 @@
     <button onclick="window.location.href='/'">Back to Dashboard</button>
   </div>
 
+  <div class="card" style="text-align:center;">
+  <h3>🧩 CPU Core Management</h3>
+  <p>Assign which cores handle AI and transactions</p>
+
+  <div style="display:flex; gap:10px; justify-content:center;">
+    <button onclick="pinCores('balance')" class="btn-secondary">Balance Load</button>
+    <button onclick="pinCores('ai_priority')" class="btn-primary">AI Priority</button>
+    <button onclick="pinCores('tx_priority')" class="btn-primary">Transaction Priority</button>
+  </div>
+
+  <p id="pinStatus" style="margin-top:10px; font-weight:600;"></p>
+</div>
+
+<script>
+async function pinCores(mode) {
+  const res = await fetch("/pin_cores", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({ mode })
+  });
+
+  const data = await res.json();
+  const status = document.getElementById("pinStatus");
+
+  if (data.status === "success") {
+    status.textContent = data.message;
+    status.style.color = "green";
+  } else {
+    status.textContent = data.message || "Error changing CPU affinity";
+    status.style.color = "red";
+  }
+}
+</script>
+
   <script>
 
         async function loadHardware() {
