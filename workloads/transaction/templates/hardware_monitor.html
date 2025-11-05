@@ -137,6 +137,22 @@ async function startFakeAI() {
     status.style.color = "orange";
   }
 }
+async function stopFakeAI() {
+  const res = await fetch("/fake_ai_stop", { method: "POST" });
+  const data = await res.json();
+  const status = document.getElementById("aiStatus");
+
+  if (data.status === "stopped") {
+    status.textContent = "Stopped AI simulation.";
+    status.style.color = "red";
+  } else if (data.status === "not_running") {
+    status.textContent = "No active AI process.";
+    status.style.color = "gray";
+  } else if (data.error) {
+    status.textContent = `Error: ${data.error}`;
+    status.style.color = "red";
+  }
+}
 </script>
 
 </body>
