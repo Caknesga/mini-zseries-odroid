@@ -103,11 +103,22 @@ form {
   margin: 30px auto;
 }
 
+.card-container {
+  display: flex;
+  justify-content: center;   /* centers them horizontally */
+  align-items: stretch;  /* make all cards equal height */
+  gap: 20px;                 /* spacing between cards */
+  flex-wrap: wrap;           /* allow wrapping on small screens */
+  margin-top: 30px;
+}
+
 .card {
-  background-color: white;
+  background-color: #fff;
+  border-radius: 10px;
+  
   padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  flex: 1 1 300px;           /* responsive width */
+  max-width: 400px;
 }
 
 .metric {
@@ -142,16 +153,19 @@ form {
   border-radius: 12px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  gap: 40px;
-  margin-top: 40px;
-  flex-wrap: wrap;
+  justify-content: center;  /* centers child horizontally */
+  align-items: center;      /* centers child vertically */
+  margin: 40px auto;        /* centers the container on the page */
+  width: 90%;               /* controls the width */
+  max-width: 1400px;   
+  gap: 15px;  
 }
 
 .transfer label {
   font-weight: 600;
-  margin-top: 10px;
+  margin-top: 4px;
+  margin-right: 10px;
+  margin-left: 10px;
   color: #161616;
 }
 
@@ -170,7 +184,7 @@ form {
 }
 
 .transfer button {
-  margin-top: 15px;
+  margin-top: 5px;
   background-color: #3d70b2;
   color: white;
   padding: 10px;
@@ -179,6 +193,7 @@ form {
   font-weight: 600;
   cursor: pointer;
   transition: background-color 0.2s ease;
+  height: 35px;
 }
 
 .transfer button:hover {

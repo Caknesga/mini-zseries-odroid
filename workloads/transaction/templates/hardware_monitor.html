@@ -28,16 +28,22 @@
   </div>
 
 
-<div class="card" style="grid-column: span 2; text-align:center;">
-  <h3>Transaction Generator</h3>
-  <p>Enter number of random transactions to simulate:</p>
-  <input type="number" id="txCount" placeholder="e.g. 10" min="1" max="1000" style="padding:8px; width:120px;">
-  <button onclick="generateTransactions()" class="btn-primary">Generate</button>
-  <p id="txResult" style="margin-top:10px; font-weight:600;"></p>
-</div>
+  <div class="card-container">
+  <div class="card" style="text-align:center;">
+    <!-- Transaction Generator -->
+     <div class="card" style="grid-column: span 2; text-align:center;">
+        <h3>Transaction Generator</h3>
+        <p>Enter number of random transactions to simulate:</p>
+        <input type="number" id="txCount" placeholder="e.g. 10" min="1" max="1000" style="padding:8px; width:120px;">
+        <button onclick="generateTransactions()" class="btn-primary">Generate</button>
+        <p id="txResult" style="margin-top:10px; font-weight:600;"></p>
+      </div>
+  </div>
 
-<div class="card" style="text-align:center;">
-  <h3>🧠 Simulate AI Inference</h3>
+  <div class="card" style="text-align:center;">
+    <!-- Simulate AI Inference -->
+     <div class="card" style="text-align:center;">
+  <h3>Simulate AI Inference</h3>
 
   <div style="display:flex; gap:12px; justify-content:center; align-items:center;">
     <label>Intensity:</label>
@@ -48,29 +54,34 @@
   </div>
 
   <div>
-    <button class="btn-primary" onclick="startFakeAI()">Start Load</button>
-    <button class="btn-secondary" onclick="stopFakeAI()">Stop Load</button>
-  </div>
+        <button class="btn-primary" onclick="startFakeAI()">Start Load</button>
+        <button class="btn-primary" onclick="stopFakeAI()">Stop Load</button>
+      </div>
 
-  <p id="aiStatus" style="margin-top:10px; font-weight:600;"></p>
-</div>
-
-  <div class="nav">
-    <button onclick="window.location.href='/'">Back to Dashboard</button>
+      <p id="aiStatus" style="font-weight:600;"></p>
+    </div>
   </div>
 
   <div class="card" style="text-align:center;">
-  <h3>🧩 CPU Core Management</h3>
-  <p>Assign which cores handle AI and transactions</p>
+    <!-- CPU Core Management -->
+     <div class="card" style="text-align:center;">
+        <h3>CPU Core Management</h3>
+        <p>Assign which cores handle AI and transactions</p>
 
-  <div style="display:flex; gap:10px; justify-content:center;">
-    <button onclick="pinCores('balance')" class="btn-secondary">Balance Load</button>
-    <button onclick="pinCores('ai_priority')" class="btn-primary">AI Priority</button>
-    <button onclick="pinCores('tx_priority')" class="btn-primary">Transaction Priority</button>
-  </div>
-
-  <p id="pinStatus" style="margin-top:10px; font-weight:600;"></p>
+        <div>
+          <button onclick="pinCores('balance')" class="btn-primary">Balance Load</button>
+          <button onclick="pinCores('ai_priority')" class="btn-primary">AI Priority</button>
+          <button onclick="pinCores('tx_priority')" class="btn-primary">Transaction Priority</button>
+        </div>
+        <p id="pinStatus" style="margin-top:10px; font-weight:600;"></p>
+      </div>
+     </div>
 </div>
+
+
+ <div class="nav">
+    <button onclick="window.location.href='/'">Back to Dashboard</button>
+  </div>
 
 <script>
 async function pinCores(mode) {
