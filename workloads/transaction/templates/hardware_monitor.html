@@ -26,7 +26,13 @@
       
     </div>
   </div>
-
+<div class="card" style="grid-column: span 2; text-align:center;">
+  <h3>🧪 Transaction Load Generator</h3>
+  <p>Enter number of random transactions to simulate:</p>
+  <input type="number" id="txCount" placeholder="e.g. 10" min="1" max="1000" style="padding:8px; width:120px;">
+  <button onclick="generateTransactions()" class="btn-primary">Generate</button>
+  <p id="txResult" style="margin-top:10px; font-weight:600;"></p>
+</div>
   <div class="nav">
     <button onclick="window.location.href='/'">Back to Dashboard</button>
   </div>
@@ -54,6 +60,40 @@
         }
         setInterval(loadHardware, 2000);
 
+</script>
+
+<script>
+async function generateTransactions() {
+  const count = parseInt(document.getElementById("txCount").value);
+  const resultEl = document.getElementById("txResult");
+
+  if (isNaN(count) || count <= 0) {
+    resultEl.textContent = "⚠️ Please enter a valid number.";
+    resultEl.style.color = "red";
+    return;
+  }
+
+  try {
+    const res = await fetch("/generate_transactions", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({ count })
+    });
+    const data = await res.json();
+
+    if (res.ok) {
+      resultEl.textContent = `✅ ${data.generated} transactions simulated successfully.`;
+      resultEl.style.color = "green";
+    } else {
+      resultEl.textContent = `❌ Error: ${data.error}`;
+      resultEl.style.color = "red";
+    }
+  } catch (err) {
+    console.error(err);
+    resultEl.textContent = "⚠️ Server not reachable.";
+    resultEl.style.color = "red";
+  }
+}
 </script>
 
 </body>

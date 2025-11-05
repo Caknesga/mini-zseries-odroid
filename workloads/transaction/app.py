@@ -8,6 +8,8 @@ import platform
 import joblib
 import numpy as np
 # from workloads.ai.infer_lr import predict_proba_amount 
+from workloads.transaction.transaction_generator import run_random_transactions
+
 
 
 
@@ -192,6 +194,22 @@ def hardware_status():
         "platform": platform.platform()
     })
 
+
+
+@app.route("/generate_transactions", methods=["POST"])
+def generate_transactions():
+    try:
+        data = request.get_json()
+        count = int(data.get("count", 0))
+        if count <= 0:
+            return jsonify({"error": "Invalid transaction count"}), 400
+
+        # Run your existing random transaction logic
+        generated = run_random_transactions(count)
+
+        return jsonify({"status": "ok", "generated": generated})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 if __name__ == "__main__":
