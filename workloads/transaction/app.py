@@ -219,10 +219,15 @@ def fake_ai_start():
     if ai_proc and ai_proc.poll() is None:
         return jsonify({"status": "already_running", "pid": ai_proc.pid}), 409
 
+    data = request.get_json(force=True)
+    intensity = int(data.get("intensity", 500_000))
+    workers = int(data.get("workers", 2))
+
     script_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "ai", "fake_inference.py"))
-    cmd = ["taskset", "-c", "1", "python3", script_path]  # pin to core 1 (optional)
+    cmd = ["taskset", "-c", "4,5", "python3", script_path, "--intensity", str(intensity), "--workers", str(workers)]
     ai_proc = subprocess.Popen(cmd)
-    return jsonify({"status": "started", "pid": ai_proc.pid})
+    return jsonify({"status": "started", "pid": ai_proc.pid, "intensity": intensity, "workers": workers})
+
 
 
 @app.route("/fake_ai_stop", methods=["POST"])
