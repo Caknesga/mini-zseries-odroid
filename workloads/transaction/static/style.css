@@ -1,19 +1,13 @@
 /* === IBM Mini ZSeries Dashboard Styling === */
 
-body {
-    font-family: "IBM Plex Sans", Arial, sans-serif;
-    background-color: #0f1112; /* IBM dark UI background */
-    color: #ffffff;
-    text-align: center;
-    margin: 0;
-    padding: 0;
-}
+body { font-family: 'IBM Plex Sans', sans-serif; background-color: #f4f4f4; color: #161616; margin: 0; padding: 20px; }
 
 h1 {
     color: #3d70b2; /* IBM blue primary */
     margin: 40px 0 20px;
     font-weight: 600;
     font-size: 2em;
+    text-align: center;
 }
 
 .account-grid {
@@ -25,13 +19,15 @@ h1 {
 }
 
 .account-box {
-    background-color: #1d1f21;
+    background-color: white;
     border: 1px solid #3d70b2;
     border-radius: 12px;
     padding: 20px;
     width: 240px;
-    box-shadow: 0 0 15px rgba(61, 112, 178, 0.3);
+    box-shadow: 0 0 10px rgba(209, 228, 255, 0.3);
     transition: transform 0.2s, box-shadow 0.2s;
+    text-align: center;
+
 }
 
 .account-box:hover {
@@ -56,9 +52,9 @@ button:hover {
 }
 
 input[type="number"] {
-    background-color: #111315;
+    
     border: 1px solid #3d70b2;
-    color: white;
+    color: rgb(2, 17, 61);
     padding: 6px;
     border-radius: 4px;
     width: 70%;
@@ -76,19 +72,12 @@ form {
 
 .transaction-section {
   flex: 2;
-  background: #1d1f21;
+  background:white#1d1f21;
   padding: 1rem;
   border-radius: 12px;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
-.hardware-section {
-  flex: 1;
-  background: #1d1f21;
-  padding: 1rem;
-  border-radius: 12px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
 
 #txTable {
   width: 100%;
@@ -104,4 +93,120 @@ form {
 #txTable th {
   background-color:#3d70b2; /* IBM Blue */
   color: white;
+}
+
+.hardware-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  max-width: 900px;
+  margin: 30px auto;
+}
+
+.card {
+  background-color: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.metric {
+  margin-bottom: 10px;
+  font-size: 1.1rem;
+}
+
+.hardware-title {
+  color: var(--ibm-blue, #3d70b2);
+  text-align: center;
+  margin-top: 20px;
+}
+
+.nav {
+  text-align: center;
+  margin-top: 30px;
+}
+
+.action-section {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 40px;
+  margin-top: 40px;
+  flex-wrap: wrap;
+}
+
+/* --- Transfer Form --- */
+.transfer {
+  background-color: #ffffff;
+  padding: 20px 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 40px;
+  margin-top: 40px;
+  flex-wrap: wrap;
+}
+
+.transfer label {
+  font-weight: 600;
+  margin-top: 10px;
+  color: #161616;
+}
+
+.transfer input {
+  padding: 8px 10px;
+  margin-top: 4px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.transfer input:focus {
+  outline: none;
+  border-color: #3d70b2;
+  box-shadow: 0 0 3px #0f62fe88;
+}
+
+.transfer button {
+  margin-top: 15px;
+  background-color: #3d70b2;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.transfer button:hover {
+  background-color: #0353e9;
+}
+
+/* --- Hardware Button --- */
+.hardware-btn-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 40px;
+}
+
+.btn-secondary {
+  background-color: #3d70b2;
+  color: #ffffff;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  margin-top: 10px;
+}
+
+.btn-secondary:hover {
+  background-color: #393939;
 }

@@ -8,18 +8,18 @@
 </head>
 <body>
     <h1> Mini-ZSeries  </h1>
-
+ 
     <div class="account-grid">
         {% for name, balance in accounts.items() %}
      <div class="account-box" id="account-{{ name }}" data-threshold="{{ thresholds[name] }}">
-            <h2>Konto {{ name }}</h2>
-            <p>Saldo: <strong id="balance-{{ name }}">{{ balance }}</strong> EUR</p>
+            <h2>Account {{ name }}</h2>
+            <p>Balance: <strong id="balance-{{ name }}">{{ balance }}</strong> EUR</p>
             
 
             <input type="number" id="amount-{{ name }}" placeholder="Betrag" min="0" step="1">
             <div class="btn-row">
-                <button onclick="updateBalance('{{ name }}', 'deposit')">Einzahlen</button>
-                <button onclick="updateBalance('{{ name }}', 'withdraw')">Abheben</button>
+                <button onclick="updateBalance('{{ name }}', 'deposit')">Deposit</button>
+                <button onclick="updateBalance('{{ name }}', 'withdraw')">Withdraw</button>
             </div>
     
             <p id="status-{{ name }}" class="status"></p>
@@ -37,7 +37,7 @@
         const box = document.getElementById(`account-${account}`);
         const threshold = parseFloat(box.dataset.threshold) || 1000;
         if (amount >= threshold) {
-        statusEl.textContent = " Möglicher Fraud";
+        statusEl.textContent = "HIGH FRAUD RISK";
         statusEl.style.color = "#da1e28";
         return;
         }
@@ -45,7 +45,7 @@
        
 
         if (isNaN(amount) || amount <= 0) {
-            statusEl.textContent = " Ungültiger Betrag";
+            statusEl.textContent = "NOT VALID AMOUNT";
             statusEl.style.color = "#da1e28"; // IBM Red
             return;
         }
@@ -61,32 +61,60 @@
 
             if (response.ok) {
                 balanceEl.textContent = data.balance;
-                statusEl.textContent = "Erfolgreich!";
+                statusEl.textContent = "Successful!";
                 statusEl.style.color = "#198038"; // IBM Green
             } else {
                 statusEl.textContent = ` ${data.error}`;
                 statusEl.style.color = "#da1e28";
             }
         } catch (error) {
-            statusEl.textContent = "Verbindungsfehler";
+            statusEl.textContent = "Connection Error";
             statusEl.style.color = "#da1e28";
         }
     }
     
     </script>
 
-<form id="transferForm">
-  <label>Von Konto:</label>
-  <input type="text" id="fromAccount" placeholder="z. B. Deniz">
+
+  <form class="transfer" id="transferForm">
+    <label>From Account:</label>
+    <input type="text" id="fromAccount" placeholder="e.g. Deniz">
+
+    <label>To Account:</label>
+    <input type="text" id="toAccount" placeholder="e.g. Markus">
+
+    <label>Amount:</label>
+    <input type="number" id="transferAmount" placeholder="Amount">
+
+    <button type="submit" class="btn-primary">Transfer</button>
+  </form>
+
   
-  <label>Zu Konto:</label>
-  <input type="text" id="toAccount" placeholder="z. B. Markus">
+  <div class="transaction-section">
+    <h2>Transaction History</h2>
+    <table id="txTable">
+      <thead>
+        <tr>
+          <th>Time</th>
+          <th>Type</th>
+          <th>Account</th>
+          <th>From</th>
+          <th>To</th>
+          <th>Amount</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="txBody"></tbody>
+    </table>
+  </div>
+ 
+</div>
 
-  <label>Betrag:</label>
-  <input type="number" id="transferAmount" placeholder="Betrag">
-
-  <button type="submit">Transferieren</button>
-</form>
+<div class="hardware-btn-container">
+    <button onclick="window.location.href='/hardware_monitor'" class="btn-secondary">
+      Hardware Monitoring
+    </button>
+  </div>
 
 <p id="transferResult"></p>
 <script>
@@ -108,7 +136,7 @@
             const result = await response.json();
 
             if (response.ok) {
-                resultEl.textContent = ` ${amount} EUR von ${from} nach ${to} übertragen.`;
+                resultEl.textContent = ` ${amount} EUR from ${from} to ${to} transferred.`;
                 resultEl.style.color = "#198038";
 
                 // 🔄 Refresh balances
@@ -128,32 +156,9 @@
         });
 </script>
 
-<div class="dashboard-row">
-  <div class="transaction-section">
-    <h2>Transaction History</h2>
-    <table id="txTable">
-      <thead>
-        <tr>
-          <th>Time</th>
-          <th>Type</th>
-          <th>Account</th>
-          <th>From</th>
-          <th>To</th>
-          <th>Amount</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody id="txBody"></tbody>
-    </table>
-  </div>
 
- <div style="margin-top: 20px; text-align: center;">
-  <button onclick="window.location.href='/hardware_monitor'" 
-          style="background-color:#0f62fe; color:white; padding:10px 20px; border:none; border-radius:8px; font-size:16px;">
-    🧠 Hardware Monitoring
-  </button>
-</div>
-</div>
+
+
 
 
 <script>
@@ -164,9 +169,9 @@ async function loadTransactions() {
   const data = await res.json();
   if (data.length === 0) return;
 
-  const latest = data[data.length - 1]; // ✅ last transaction only
+  const latest = data[data.length - 1]; // last transaction only
 
-  // ✅ Only proceed if this transaction is new
+  // Only proceed if this transaction is new
   if (latest.timestamp === lastTxTimestamp) return;
   lastTxTimestamp = latest.timestamp;
 
@@ -187,32 +192,5 @@ async function loadTransactions() {
 
 setInterval(loadTransactions, 2000);
 </script>
-
-<script>
-
-async function loadHardware() {
-  const res = await fetch("/hardware");
-  const data = await res.json();
-
- document.getElementById("platform").textContent = data.platform;
-  document.getElementById("cpu").textContent = data.cpu_percent ;
-  document.getElementById("per_core").textContent=data.per_core_cpu;
- if (data.cpu_freq) {
-    document.getElementById("freq").textContent = data.cpu_freq.current;
-  }
-
-  document.getElementById("memory").textContent = data.memory_percent + "%";
-  document.getElementById("disk").textContent = data.disk_percent + "%";
-
-
-  document.getElementById("temp").textContent = data.temperature + "°C";
-   
-
-}
-setInterval(loadHardware, 2000);
-
-</script>
-
-
 </body>
 </html>
