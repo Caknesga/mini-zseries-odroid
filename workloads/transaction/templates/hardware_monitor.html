@@ -16,23 +16,33 @@
       <p class="metric">CPU Load: <span id="cpu">--</span>%</p>
       <p class="metric">CPU Load per Core: <span id="per_core">--</span></p>
       <p class="metric">CPU Frequency: <span id="freq">--</span> MHz</p>
-      <p class="metric">Temperature: <span id="temp">--</span> °C</p>
+      <p class="metric">Temperature: <span id="temp">--</span> </p>
     </div>
 
     <div class="card">
       <h3>Memory & Disk</h3>
-      <p class="metric">Memory Usage: <span id="memory">--</span>%</p>
-      <p class="metric">Disk Usage: <span id="disk">--</span>%</p>
+      <p class="metric">Memory Usage: <span id="memory">--</span></p>
+      <p class="metric">Disk Usage: <span id="disk">--</span></p>
       
     </div>
   </div>
+
+
 <div class="card" style="grid-column: span 2; text-align:center;">
-  <h3>🧪 Transaction Load Generator</h3>
+  <h3>Transaction Generator</h3>
   <p>Enter number of random transactions to simulate:</p>
   <input type="number" id="txCount" placeholder="e.g. 10" min="1" max="1000" style="padding:8px; width:120px;">
   <button onclick="generateTransactions()" class="btn-primary">Generate</button>
   <p id="txResult" style="margin-top:10px; font-weight:600;"></p>
 </div>
+
+<div class="card" style="text-align:center;">
+  <h3>🧠 Simulate AI Inference</h3>
+  <button class="btn-primary" onclick="startFakeAI()">Start Load</button>
+  <button class="btn-secondary" onclick="stopFakeAI()">Stop Load</button>
+  <p id="aiStatus" style="margin-top:10px; font-weight:600;"></p>
+</div>
+
   <div class="nav">
     <button onclick="window.location.href='/'">Back to Dashboard</button>
   </div>
@@ -93,6 +103,24 @@ async function generateTransactions() {
     resultEl.textContent = "⚠️ Server not reachable.";
     resultEl.style.color = "red";
   }
+}
+</script>
+
+<script>
+async function startFakeAI() {
+  const res = await fetch("/fake_ai_start", { method: "POST" });
+  const data = await res.json();
+  const status = document.getElementById("aiStatus");
+  status.textContent = data.status === "started" ? `Fake AI started (PID ${data.pid})` : "Already running";
+  status.style.color = "green";
+}
+
+async function stopFakeAI() {
+  const res = await fetch("/fake_ai_stop", { method: "POST" });
+  const data = await res.json();
+  const status = document.getElementById("aiStatus");
+  status.textContent = "Stopped";
+  status.style.color = "orange";
 }
 </script>
 

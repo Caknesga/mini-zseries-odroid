@@ -87,6 +87,7 @@
     <input type="number" id="transferAmount" placeholder="Amount">
 
     <button type="submit" class="btn-primary">Transfer</button>
+    <p id="transferResult"></p>
   </form>
 
   
@@ -106,6 +107,7 @@
       </thead>
       <tbody id="txBody"></tbody>
     </table>
+    
   </div>
  
 </div>
@@ -116,7 +118,7 @@
     </button>
   </div>
 
-<p id="transferResult"></p>
+
 <script>
         document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("transferForm").addEventListener("submit", async (e) => {
@@ -139,7 +141,7 @@
                 resultEl.textContent = ` ${amount} EUR from ${from} to ${to} transferred.`;
                 resultEl.style.color = "#198038";
 
-                // 🔄 Refresh balances
+                // Refresh balances
                 for (const [acc, balance] of Object.entries(result.balances)) {
                 const el = document.getElementById(`balance-${acc}`);
                 if (el) el.textContent = balance;
@@ -155,11 +157,6 @@
         });
         });
 </script>
-
-
-
-
-
 
 <script>
    let lastTxTimestamp = null;

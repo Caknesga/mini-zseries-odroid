@@ -9,6 +9,7 @@ import joblib
 import numpy as np
 # from workloads.ai.infer_lr import predict_proba_amount 
 from workloads.transaction.transaction_generator import run_random_transactions
+import subprocess, signal, os
 
 
 
@@ -17,6 +18,7 @@ app = Flask(__name__)
 accounts = {"Deniz": 1000, "Markus": 3000, "IBM": 1500000}
 lock = threading.Lock()  # Für Konsistenz
 transactions = []  # load from 'transactions.json' 
+ai_proc = None
 
 
 def save_state():
@@ -211,6 +213,27 @@ def generate_transactions():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@app.route("/fake_ai_start", methods=["POST"])
+def fake_ai_start():
+    global ai_proc
+    if ai_proc and ai_proc.poll() is None:
+        return jsonify({"status": "already_running", "pid": ai_proc.pid}), 409
+
+    script_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "ai", "fake_inference.py"))
+    cmd = ["taskset", "-c", "1", "python3", script_path]  # pin to core 1 (optional)
+    ai_proc = subprocess.Popen(cmd)
+    return jsonify({"status": "started", "pid": ai_proc.pid})
+
+
+@app.route("/fake_ai_stop", methods=["POST"])
+def fake_ai_stop():
+    global ai_proc
+    if not ai_proc or ai_proc.poll() is not None:
+        ai_proc = None
+        return jsonify({"status": "not_running"})
+    ai_proc.terminate()
+    ai_proc = None
+    return jsonify({"status": "stopped"})
 
 if __name__ == "__main__":
     load_state()
