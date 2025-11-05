@@ -236,9 +236,14 @@ def fake_ai_stop():
     if not ai_proc or ai_proc.poll() is not None:
         ai_proc = None
         return jsonify({"status": "not_running"})
-    ai_proc.terminate()
-    ai_proc = None
-    return jsonify({"status": "stopped"})
+
+    try:
+        # Kill the whole process group
+        os.killpg(os.getpgid(ai_proc.pid), signal.SIGTERM)
+        ai_proc = None
+        return jsonify({"status": "stopped"})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
     load_state()
