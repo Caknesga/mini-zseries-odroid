@@ -223,7 +223,7 @@ def fake_ai_start():
     intensity = int(data.get("intensity", 500_000))
     workers = int(data.get("workers", 2))
 
-    script_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "ai", "fake_inference.py"))
+    script_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "transaction", "fake_inference.py"))
     cmd = ["taskset", "-c", "4,5", "python3", script_path, "--intensity", str(intensity), "--workers", str(workers)]
     ai_proc = subprocess.Popen(cmd)
     return jsonify({"status": "started", "pid": ai_proc.pid, "intensity": intensity, "workers": workers})
