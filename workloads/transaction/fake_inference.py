@@ -1,17 +1,24 @@
-import math, time, random, argparse, multiprocessing, os
+import math, time, random, argparse, multiprocessing, os, signal
+
+STOP_FILE = "/tmp/fake_ai_stop.flag"
+
+def heavy_loop(intensity):
+    while True:
+        # check for stop signal
+        if os.path.exists(STOP_FILE):
+            break
+        acc = 0.0
+        for i in range(intensity):
+            acc += math.sin(i) * math.cos(i)
+        time.sleep(0.01 + random.random() * 0.005)
 
 def simulate_inference(intensity=500_000, workers=2):
-    """Simulate parallel AI inference load (multi-core)."""
-    print(f"[Fake AI] Starting {workers} workers with intensity={intensity}")
-    def heavy_loop(intensity):
-        while True:
-            acc = 0.0
-            for i in range(intensity):
-                acc += math.sin(i) * math.cos(i)
-            # only a tiny pause so it doesn’t lock the board
-            time.sleep(0.01 + random.random() * 0.005)
+    # remove old stop file
+    if os.path.exists(STOP_FILE):
+        os.remove(STOP_FILE)
 
-    # Launch N worker processes
+    print(f"[Fake AI] Starting {workers} workers (intensity={intensity})")
+
     procs = []
     for _ in range(workers):
         p = multiprocessing.Process(target=heavy_loop, args=(intensity,))
@@ -19,13 +26,16 @@ def simulate_inference(intensity=500_000, workers=2):
         p.start()
         procs.append(p)
 
-    print(f"[Fake AI] PID={os.getpid()} running")
     try:
         for p in procs:
             p.join()
     except KeyboardInterrupt:
+        pass
+    finally:
+        print("[Fake AI] Inference stopped gracefully.")
         for p in procs:
-            p.terminate()
+            if p.is_alive():
+                p.terminate()
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

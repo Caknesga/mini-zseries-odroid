@@ -237,9 +237,12 @@ def fake_ai_stop():
         ai_proc = None
         return jsonify({"status": "not_running"})
 
-    ai_proc.terminate()
-    ai_proc = None
-    return jsonify({"status": "stopped"})
+    # create the stop flag file
+    with open("/tmp/fake_ai_stop.flag", "w") as f:
+        f.write("stop")
+
+    return jsonify({"status": "stopping"})
+
 if __name__ == "__main__":
     load_state()
     app.run(host="0.0.0.0", port=5050)
